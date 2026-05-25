@@ -15,18 +15,28 @@
   <header class="site-header">
     <div class="container header-inner">
       <a class="logo" href="index.html">
-        <span class="logo-mark">МПП</span>
-        <span class="logo-text" data-i18n="brand.name">Мінітранс</span>
+        <img class="logo-image" src="assets/images/logo.png" alt="МПП Мінітранс" />
       </a>
-      <nav class="site-nav" id="site-nav">
-        <a href="index.html#about" data-i18n="nav.about">Про компанію</a>
-        <a href="index.html#services" data-i18n="nav.services">Логістика</a>
-        <a href="index.html#service-center" data-i18n="nav.serviceCenter">Сервіс</a>
-        <a href="index.html#fleet" data-i18n="nav.fleet">Автопарк</a>
-        <a href="index.html#infrastructure" data-i18n="nav.infrastructure">Інфраструктура</a>
-        <a href="index.html#advantages" data-i18n="nav.advantages">Переваги</a>
-        <a href="vacancies.html" data-i18n="nav.vacancies">Вакансії</a>
-        <a class="nav-cta" href="index.html#contacts" data-i18n="nav.contactCta">Зв’язатися</a>
+      <nav class="site-nav" id="site-nav" aria-label="Навігація">
+        <div class="nav-panel">
+          <div class="nav-header">
+            <span class="nav-title" data-i18n="nav.title">Меню</span>
+            <button class="nav-close" type="button" aria-label="Закрити меню" data-i18n-aria="nav.close">
+              <span></span>
+              <span></span>
+            </button>
+          </div>
+          <div class="nav-links">
+            <a href="index.html#about" data-i18n="nav.about">Про компанію</a>
+            <a href="index.html#services" data-i18n="nav.services">Логістика</a>
+            <a href="index.html#service-center" data-i18n="nav.serviceCenter">Сервіс</a>
+            <a href="index.html#fleet" data-i18n="nav.fleet">Автопарк</a>
+            <a href="index.html#infrastructure" data-i18n="nav.infrastructure">Інфраструктура</a>
+            <a href="index.html#advantages" data-i18n="nav.advantages">Переваги</a>
+            <a href="vacancies.html" data-i18n="nav.vacancies">Вакансії</a>
+            <a class="nav-cta" href="index.html#contacts" data-i18n="nav.contactCta">Зв’язатися</a>
+          </div>
+        </div>
       </nav>
       <div class="header-actions">
         <div class="lang-toggle" role="group" aria-label="Мова" data-i18n-aria="lang.aria">
@@ -105,7 +115,9 @@
           <h3 data-i18n="vacancies.contactTitle">Контакти для кандидатів</h3>
           <p data-i18n="vacancies.contactLead">Телефонуйте для уточнення деталей.</p>
           <p class="contact-label" data-i18n="contacts.phoneLabel">Телефон</p>
-          <a class="contact-value" href="tel:+380503723819">+38 (050) 372 38 19</a>
+          <a class="contact-value" href="tel:+380503178385">+38 (050) 317 83 85</a>
+          <p class="contact-label" data-i18n="vacancies.contactPersonLabel">Контактна особа</p>
+          <p class="contact-value">Віктор</p>
           <p class="contact-label" data-i18n="contacts.addressLabel">Адреса</p>
           <p class="contact-value" data-i18n="contacts.addressValue">р-н, вул. Східна, 4а, Ужгородський, Великі Лази, Закарпатська область, 88440</p>
         </div>
@@ -154,7 +166,7 @@
     <div class="container footer-inner">
       <div>
         <a class="logo" href="index.html">
-          <span class="logo-mark">МПП</span>
+          <img class="logo-image" src="assets/images/logo.png" alt="МПП Мінітранс" />
           <span class="logo-text" data-i18n="brand.name">Мінітранс</span>
         </a>
         <p data-i18n="footer.desc">Надійний логістичний партнер з 2003 року. Працюємо по Україні та Європі.</p>
@@ -167,7 +179,7 @@
       </div>
       <div class="footer-contact">
         <span class="footer-label" data-i18n="footer.phoneLabel">Телефон</span>
-        <a href="tel:+380503723819">+38 (050) 372 38 19</a>
+        <a href="tel:+380503178385">+38 (050) 317 83 85</a>
         <span class="footer-label" data-i18n="footer.addressLabel">Адреса</span>
         <span data-i18n="footer.addressValue">р-н, вул. Східна, 4а, Ужгородський, Великі Лази, Закарпатська область, 88440</span>
       </div>
@@ -175,6 +187,10 @@
     <div class="container footer-bottom">
       <span>© <span data-year></span> МПП Мінітранс</span>
       <span data-i18n="footer.bottomLine">Вантажні перевезення Україна — Європа</span>
+      <div class="footer-legal">
+        <a href="privacy.html" data-i18n="footer.privacy">Політика конфіденційності</a>
+        <a href="terms.html" data-i18n="footer.terms">Умови використання</a>
+      </div>
     </div>
   </footer>
 

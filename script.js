@@ -134,10 +134,17 @@ const translations = {
     "contacts.eyebrow": "Контакти",
     "contacts.title": "Зв’язатися з нами",
     "contacts.lead": "Залиште запит або телефонуйте — відповімо максимально швидко.",
+    "contacts.rolesTitle": "Відповідальні контакти",
+    "contacts.rolesLead": "Оберіть напрямок і телефонуйте безпосередньо.",
+    "contacts.role.vacancies": "Вакансії",
+    "contacts.role.transport": "Замовлення перевезення",
+    "contacts.role.service": "Сервіс",
+    "contacts.role.tacho": "Тахосервіс",
+    "contacts.role.dhl": "DHL",
     "contacts.infoTitle": "Контактна інформація",
     "contacts.phoneLabel": "Телефон",
     "contacts.hoursLabel": "Режим роботи",
-    "contacts.hoursValue": "Пн–Сб: 08:00–19:00",
+    "contacts.hoursValue": "Пн–Сб: 09:00–18:00",
     "contacts.addressLabel": "Адреса",
     "contacts.addressValue": "р-н, вул. Східна, 4а, Ужгородський, Великі Лази, Закарпатська область, 88440",
     "contacts.addressNote": "Чекаємо на ваш візит до нашого сервісного центру.",
@@ -162,6 +169,19 @@ const translations = {
     "footer.addressLabel": "Адреса",
     "footer.addressValue": "р-н, вул. Східна, 4а, Ужгородський, Великі Лази, Закарпатська область, 88440",
     "footer.bottomLine": "Вантажні перевезення Україна — Європа",
+    "footer.privacy": "Політика конфіденційності",
+    "footer.terms": "Умови використання",
+    "legal.eyebrow": "Документи",
+    "privacy.title": "Політика конфіденційності",
+    "privacy.lead": "Ми поважаємо вашу приватність та захищаємо персональні дані.",
+    "privacy.body1": "Збираємо лише дані, які ви залишаєте у формах: ім’я, телефон та повідомлення.",
+    "privacy.body2": "Інформація використовується виключно для зв’язку та надання послуг і не передається третім сторонам без згоди.",
+    "privacy.body3": "Ви можете запросити оновлення або видалення даних, звернувшись за телефоном.",
+    "terms.title": "Умови використання",
+    "terms.lead": "Користуючись сайтом, ви погоджуєтесь із цими умовами.",
+    "terms.body1": "Інформація на сайті має довідковий характер і може змінюватися без попередження.",
+    "terms.body2": "Заявки через форми не є договором; остаточні умови узгоджуються з менеджером.",
+    "terms.body3": "Заборонено копіювання матеріалів сайту без письмового дозволу.",
     "vacancies.hero.eyebrow": "Кар’єра",
     "vacancies.hero.title": "Вакансії в МПП Мінітранс",
     "vacancies.hero.lead": "Приєднуйтесь до команди, яка поєднує логістику, сервіс і сучасний автопарк.",
@@ -201,6 +221,7 @@ const translations = {
     "vacancies.form.submit": "Надіслати заявку",
     "vacancies.contactTitle": "Контакти для кандидатів",
     "vacancies.contactLead": "Телефонуйте для уточнення деталей.",
+    "vacancies.contactPersonLabel": "Контактна особа",
     "vacancies.backToHome": "Повернутися на головну"
   },
   en: {
@@ -338,10 +359,17 @@ const translations = {
     "contacts.eyebrow": "Contacts",
     "contacts.title": "Contact us",
     "contacts.lead": "Leave a request or call us — we respond quickly.",
+    "contacts.rolesTitle": "Direct contacts",
+    "contacts.rolesLead": "Choose a direction and call the responsible person.",
+    "contacts.role.vacancies": "Vacancies",
+    "contacts.role.transport": "Transport orders",
+    "contacts.role.service": "Service",
+    "contacts.role.tacho": "Tacho service",
+    "contacts.role.dhl": "DHL",
     "contacts.infoTitle": "Contact information",
     "contacts.phoneLabel": "Phone",
     "contacts.hoursLabel": "Working hours",
-    "contacts.hoursValue": "Mon–Sat: 08:00–19:00",
+    "contacts.hoursValue": "Mon–Sat: 09:00–18:00",
     "contacts.addressLabel": "Address",
     "contacts.addressValue": "4a Skhidna St., Velyki Lazy, Uzhhorod district, Zakarpattia region, 88440",
     "contacts.addressNote": "We look forward to seeing you at our service center.",
@@ -366,6 +394,19 @@ const translations = {
     "footer.addressLabel": "Address",
     "footer.addressValue": "4a Skhidna St., Velyki Lazy, Uzhhorod district, Zakarpattia region, 88440",
     "footer.bottomLine": "Freight transport Ukraine — Europe",
+    "footer.privacy": "Privacy policy",
+    "footer.terms": "Terms of use",
+    "legal.eyebrow": "Legal",
+    "privacy.title": "Privacy policy",
+    "privacy.lead": "We respect your privacy and protect personal data.",
+    "privacy.body1": "We collect only the data you leave in forms: name, phone, and message.",
+    "privacy.body2": "Information is used only to contact you and provide services and is not shared without consent.",
+    "privacy.body3": "You can request updates or deletion of data by contacting us by phone.",
+    "terms.title": "Terms of use",
+    "terms.lead": "By using the site, you agree to these terms.",
+    "terms.body1": "Website information is for reference and may change without notice.",
+    "terms.body2": "Form submissions are not contracts; final terms are agreed with a manager.",
+    "terms.body3": "Copying site materials without written permission is prohibited.",
     "vacancies.hero.eyebrow": "Careers",
     "vacancies.hero.title": "Vacancies at MPP Minitrans",
     "vacancies.hero.lead": "Join a team that combines logistics, service, and a modern fleet.",
@@ -405,6 +446,7 @@ const translations = {
     "vacancies.form.submit": "Send application",
     "vacancies.contactTitle": "Contacts for candidates",
     "vacancies.contactLead": "Call us for details.",
+    "vacancies.contactPersonLabel": "Contact person",
     "vacancies.backToHome": "Back to home"
   }
 };
@@ -478,20 +520,33 @@ const initLanguage = () => {
 const initNavToggle = () => {
   const navToggle = document.querySelector(".nav-toggle");
   const siteNav = document.getElementById("site-nav");
+  const navBackdrop = document.querySelector(".nav-backdrop");
   if (!navToggle || !siteNav) {
     return;
   }
 
-  navToggle.addEventListener("click", () => {
-    const isOpen = siteNav.classList.toggle("is-open");
+  const setNavState = (isOpen) => {
+    siteNav.classList.toggle("is-open", isOpen);
     navToggle.setAttribute("aria-expanded", String(isOpen));
+    document.body.classList.toggle("nav-open", isOpen);
+    if (navBackdrop) {
+      navBackdrop.classList.toggle("is-open", isOpen);
+    }
+  };
+
+  navToggle.addEventListener("click", () => {
+    const isOpen = !siteNav.classList.contains("is-open");
+    setNavState(isOpen);
   });
+
+  if (navBackdrop) {
+    navBackdrop.addEventListener("click", () => setNavState(false));
+  }
 
   siteNav.querySelectorAll("a").forEach((link) => {
     link.addEventListener("click", () => {
       if (siteNav.classList.contains("is-open")) {
-        siteNav.classList.remove("is-open");
-        navToggle.setAttribute("aria-expanded", "false");
+        setNavState(false);
       }
     });
   });
