@@ -1,7 +1,7 @@
 const translations = {
   uk: {
     "skip.link": "Перейти до контенту",
-    "brand.name": "Мінітранс",
+    "brand.name": "МПП Мінітранс",
     "nav.about": "Про компанію",
     "nav.services": "Логістика",
     "nav.serviceCenter": "Сервіс",
@@ -11,6 +11,8 @@ const translations = {
     "nav.vacancies": "Вакансії",
     "nav.contactCta": "Зв’язатися",
     "nav.toggle": "Відкрити меню",
+    "nav.title": "Меню",
+    "nav.close": "Закрити меню",
     "lang.aria": "Мова",
     "hero.eyebrow": "МПП Мінітранс",
     "hero.title": "Міжнародні перевезення та експедиція з контролем на кожному етапі",
@@ -141,6 +143,11 @@ const translations = {
     "contacts.role.service": "Сервіс",
     "contacts.role.tacho": "Тахосервіс",
     "contacts.role.dhl": "DHL",
+    "contacts.name.viktor": "Віктор",
+    "contacts.name.slavik": "Славік",
+    "contacts.name.eduard": "Едуард",
+    "contacts.name.oleksandr": "Олександр",
+    "contacts.name.mykhailo": "Михайло",
     "contacts.infoTitle": "Контактна інформація",
     "contacts.phoneLabel": "Телефон",
     "contacts.hoursLabel": "Режим роботи",
@@ -226,7 +233,7 @@ const translations = {
   },
   en: {
     "skip.link": "Skip to content",
-    "brand.name": "Minitrans",
+    "brand.name": "MPP Minitrans",
     "nav.about": "About",
     "nav.services": "Logistics",
     "nav.serviceCenter": "Service Center",
@@ -236,6 +243,8 @@ const translations = {
     "nav.vacancies": "Careers",
     "nav.contactCta": "Contact",
     "nav.toggle": "Open menu",
+    "nav.title": "Menu",
+    "nav.close": "Close menu",
     "lang.aria": "Language",
     "hero.eyebrow": "MPP Minitrans",
     "hero.title": "International transport and freight forwarding with control at every stage",
@@ -366,6 +375,11 @@ const translations = {
     "contacts.role.service": "Service",
     "contacts.role.tacho": "Tacho service",
     "contacts.role.dhl": "DHL",
+    "contacts.name.viktor": "Viktor",
+    "contacts.name.slavik": "Slavik",
+    "contacts.name.eduard": "Eduard",
+    "contacts.name.oleksandr": "Oleksandr",
+    "contacts.name.mykhailo": "Mykhailo",
     "contacts.infoTitle": "Contact information",
     "contacts.phoneLabel": "Phone",
     "contacts.hoursLabel": "Working hours",
@@ -521,6 +535,8 @@ const initNavToggle = () => {
   const navToggle = document.querySelector(".nav-toggle");
   const siteNav = document.getElementById("site-nav");
   const navBackdrop = document.querySelector(".nav-backdrop");
+  const navClose = siteNav ? siteNav.querySelector(".nav-close") : null;
+  let lastFocused = null;
   if (!navToggle || !siteNav) {
     return;
   }
@@ -532,6 +548,23 @@ const initNavToggle = () => {
     if (navBackdrop) {
       navBackdrop.classList.toggle("is-open", isOpen);
     }
+    const isOverlay = window.matchMedia("(max-width: 960px)").matches;
+    if (isOverlay) {
+      siteNav.setAttribute("aria-hidden", String(!isOpen));
+      siteNav.toggleAttribute("inert", !isOpen);
+    } else {
+      siteNav.removeAttribute("aria-hidden");
+      siteNav.removeAttribute("inert");
+    }
+    if (isOpen) {
+      lastFocused = document.activeElement;
+      const firstLink = siteNav.querySelector("a");
+      if (firstLink) {
+        firstLink.focus();
+      }
+    } else if (lastFocused && typeof lastFocused.focus === "function") {
+      lastFocused.focus();
+    }
   };
 
   navToggle.addEventListener("click", () => {
@@ -539,9 +572,19 @@ const initNavToggle = () => {
     setNavState(isOpen);
   });
 
+  if (navClose) {
+    navClose.addEventListener("click", () => setNavState(false));
+  }
+
   if (navBackdrop) {
     navBackdrop.addEventListener("click", () => setNavState(false));
   }
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && siteNav.classList.contains("is-open")) {
+      setNavState(false);
+    }
+  });
 
   siteNav.querySelectorAll("a").forEach((link) => {
     link.addEventListener("click", () => {
@@ -550,6 +593,14 @@ const initNavToggle = () => {
       }
     });
   });
+
+  window.addEventListener("resize", () => {
+    if (!siteNav.classList.contains("is-open")) {
+      setNavState(false);
+    }
+  });
+
+  setNavState(false);
 };
 
 const initReveal = () => {

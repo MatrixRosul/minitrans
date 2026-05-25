@@ -144,6 +144,67 @@ p {
   font-size: 0.95rem;
 }
 
+.nav-panel {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.nav-header {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+}
+
+.nav-title {
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gray-500);
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.nav-close {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: var(--white);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+}
+
+.nav-close span {
+  position: absolute;
+  width: 18px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--blue-700);
+}
+
+.nav-close span:first-child {
+  transform: rotate(45deg);
+}
+
+.nav-close span:last-child {
+  transform: rotate(-45deg);
+}
+
+.nav-close:focus-visible {
+  outline: 2px solid rgba(27, 95, 209, 0.45);
+  outline-offset: 2px;
+}
+
 .site-nav a {
   color: var(--gray-700);
   transition: color 0.2s ease;
@@ -561,7 +622,7 @@ body.nav-open {
 .checklist li::before {
   content: "";
   position: absolute;
-  left: 0;
+  left: auto;
   top: 8px;
   width: 12px;
   height: 12px;
@@ -614,6 +675,8 @@ body.nav-open {
 
 .quote {
   font-style: italic;
+  font-size: 1rem;
+  color: var(--gray-700);
 }
 
 .quote-meta {
@@ -622,6 +685,33 @@ body.nav-open {
   display: grid;
   gap: 4px;
   color: var(--gray-500);
+}
+
+.quote-name {
+  font-weight: 700;
+  color: var(--blue-700);
+}
+
+.quote-role {
+  font-size: 0.9rem;
+}
+
+.testimonial-card {
+  position: relative;
+  padding: 26px 26px 24px 30px;
+  background: linear-gradient(150deg, #ffffff 0%, #f3f7ff 100%);
+  border: 1px solid rgba(27, 95, 209, 0.16);
+}
+
+.testimonial-card::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 22px;
+  bottom: 22px;
+  width: 4px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, var(--blue-600), var(--blue-500));
 }
 
 .legal-content .card {
@@ -876,32 +966,54 @@ body.nav-open {
 @media (max-width: 960px) {
   .site-nav {
     position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    width: min(82vw, 320px);
+    inset: 0;
+    width: 100%;
     height: 100dvh;
+    align-items: stretch;
+    justify-content: flex-end;
+    background: transparent;
+    pointer-events: none;
+    z-index: 30;
+    gap: 0;
+  }
+
+  .nav-panel {
     flex-direction: column;
     align-items: stretch;
-    justify-content: flex-start;
+    gap: 16px;
+    width: min(82vw, 320px);
+    height: 100dvh;
     background: var(--white);
     padding: calc(72px + env(safe-area-inset-top)) 16px calc(20px + env(safe-area-inset-bottom));
     border-radius: 0;
-    box-shadow: 18px 0 40px rgba(15, 23, 42, 0.18);
-    transform: translateX(-100%);
-    opacity: 1;
-    pointer-events: none;
+    box-shadow: -18px 0 40px rgba(15, 23, 42, 0.18);
+    transform: translateX(100%);
     transition: transform 0.28s ease;
-    z-index: 30;
-    gap: 8px;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
   }
 
+  .nav-header {
+    display: flex;
+  }
+
+  .nav-links {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .nav-close {
+    background: var(--gray-50);
+  }
+
   .site-nav.is-open {
-    transform: translateX(0);
     pointer-events: auto;
+  }
+
+  .site-nav.is-open .nav-panel {
+    transform: translateX(0);
   }
 
   .nav-toggle {
@@ -961,7 +1073,7 @@ body.nav-open {
     height: 32px;
   }
 
-  .site-nav {
+  .nav-panel {
     width: 100%;
     padding: calc(68px + env(safe-area-inset-top)) 16px calc(16px + env(safe-area-inset-bottom));
   }
