@@ -857,6 +857,13 @@ body.nav-open {
   border: 0;
 }
 
+.map-link {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  cursor: pointer;
+}
+
 .map-overlay {
   position: absolute;
   top: 20px;
@@ -867,6 +874,8 @@ body.nav-open {
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(6px);
+  pointer-events: none;
+  z-index: 2;
 }
 
 .map-title {
