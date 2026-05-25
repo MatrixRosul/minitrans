@@ -622,8 +622,8 @@ body.nav-open {
 .checklist li::before {
   content: "";
   position: absolute;
-  left: auto;
-  top: 8px;
+  left: 0;
+  top: 0.4em;
   width: 12px;
   height: 12px;
   border-radius: 50%;
