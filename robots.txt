@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://minitrans.uz.ua/sitemap.xml
