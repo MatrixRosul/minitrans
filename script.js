@@ -542,6 +542,7 @@ const initNavToggle = () => {
   }
 
   const setNavState = (isOpen) => {
+    const changed = isOpen !== siteNav.classList.contains("is-open");
     siteNav.classList.toggle("is-open", isOpen);
     navToggle.setAttribute("aria-expanded", String(isOpen));
     document.body.classList.toggle("nav-open", isOpen);
@@ -557,12 +558,14 @@ const initNavToggle = () => {
       siteNav.removeAttribute("inert");
     }
     if (isOpen) {
-      lastFocused = document.activeElement;
-      const firstLink = siteNav.querySelector("a");
-      if (firstLink) {
-        firstLink.focus();
+      if (changed) {
+        lastFocused = document.activeElement;
+        const firstLink = siteNav.querySelector("a");
+        if (firstLink) {
+          firstLink.focus();
+        }
       }
-    } else if (lastFocused && typeof lastFocused.focus === "function") {
+    } else if (changed && lastFocused && typeof lastFocused.focus === "function") {
       lastFocused.focus();
     }
   };
@@ -595,7 +598,12 @@ const initNavToggle = () => {
   });
 
   window.addEventListener("resize", () => {
-    if (!siteNav.classList.contains("is-open")) {
+    const isOverlay = window.matchMedia("(max-width: 960px)").matches;
+    if (siteNav.classList.contains("is-open") && !isOverlay) {
+      // crossed to desktop while the drawer was open — reset locked state
+      setNavState(false);
+    } else if (!siteNav.classList.contains("is-open")) {
+      // keep inert / aria-hidden in sync with the current breakpoint
       setNavState(false);
     }
   });
