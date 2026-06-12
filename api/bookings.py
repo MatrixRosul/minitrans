@@ -114,6 +114,9 @@ class handler(BaseHTTPRequestHandler):
         if email and not re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", email):
             util.send_json(self, 400, {"error": "Невірна пошта"})
             return
+        if email and util.email_blocked(email):
+            util.send_json(self, 400, {"error": "Пошти на російських доменах не приймаються"})
+            return
         if not isinstance(hour, int) or hour not in HOURS or not re.match(r"^\d{4}-\d{2}-\d{2}$", date_s):
             util.send_json(self, 400, {"error": "Невірний слот"})
             return

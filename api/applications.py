@@ -68,6 +68,9 @@ class handler(BaseHTTPRequestHandler):
         if email and not re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", email):
             util.send_json(self, 400, {"error": "Невірна пошта"})
             return
+        if email and util.email_blocked(email):
+            util.send_json(self, 400, {"error": "Пошти на російських доменах не приймаються"})
+            return
 
         comment = str(body.get("comment") or "").strip()[:2000]
         position = str(body.get("position") or "").strip()[:200]

@@ -140,6 +140,14 @@ def get_query(h):
     return {k: _fix_encoding(v) for k, v in parse_qsl(urlsplit(h.path).query)}
 
 
+BLOCKED_EMAIL_TLDS = (".ru", ".su", ".рф", ".xn--p1ai")  # russian domains (xn--p1ai = punycode .рф)
+
+
+def email_blocked(email):
+    domain = (email or "").rsplit("@", 1)[-1].strip().lower().rstrip(".")
+    return domain.endswith(BLOCKED_EMAIL_TLDS)
+
+
 def read_body(h):
     try:
         length = int(h.headers.get("Content-Length") or 0)
