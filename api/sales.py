@@ -51,6 +51,14 @@ class handler(BaseHTTPRequestHandler):
         if db.mode() == "none":
             util.send_json(self, 503, {"error": "store-not-configured"})
             return
+        post_id = util.get_query(self).get("id")
+        if post_id:
+            post = db.get_post(post_id)
+            if not post or (post["hidden"] and not util.is_authed(self)):
+                util.send_json(self, 404, {"error": "not found"})
+                return
+            util.send_json(self, 200, {"post": post})
+            return
         posts = db.list_posts()
         if not util.is_authed(self):
             posts = [p for p in posts if not p["hidden"]]

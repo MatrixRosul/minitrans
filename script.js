@@ -249,6 +249,10 @@ const translations = {
     "sales.statusSold": "Продано",
     "sales.priceOnRequest": "Ціна за запитом",
     "sales.inquire": "Дізнатись деталі",
+    "sales.more": "Дізнатись більше",
+    "saleDetail.back": "← Усі оголошення",
+    "saleDetail.contactLabel": "Продаж техніки — Віктор",
+    "saleDetail.notFound": "Оголошення не знайдено — можливо, техніку вже продано.",
     "sales.ctaTitle": "Зацікавила техніка?",
     "sales.ctaText": "Зателефонуйте — підкажемо наявність, ціну та умови.",
     "sales.ctaButton": "Зв’язатись",
@@ -543,6 +547,10 @@ const translations = {
     "sales.statusSold": "Sold",
     "sales.priceOnRequest": "Price on request",
     "sales.inquire": "Request details",
+    "sales.more": "Learn more",
+    "saleDetail.back": "← All listings",
+    "saleDetail.contactLabel": "Equipment sales — Viktor",
+    "saleDetail.notFound": "Listing not found — the vehicle may already be sold.",
     "sales.ctaTitle": "Interested in a vehicle?",
     "sales.ctaText": "Give us a call — we'll confirm availability, price and terms.",
     "sales.ctaButton": "Contact us",
@@ -765,6 +773,42 @@ const setYear = () => {
   });
 };
 
+// Fullscreen photo viewer shared by the sales list and the sale detail page.
+const openLightbox = (imgs, start) => {
+  let i = start;
+  const overlay = document.createElement("div");
+  overlay.className = "lightbox";
+  const img = document.createElement("img");
+  img.src = imgs[i];
+  overlay.appendChild(img);
+  if (imgs.length > 1) {
+    const mk = (cls, label, step) => {
+      const b = document.createElement("button");
+      b.className = "lightbox-nav " + cls;
+      b.type = "button";
+      b.textContent = label;
+      b.addEventListener("click", (e) => {
+        e.stopPropagation();
+        i = (i + step + imgs.length) % imgs.length;
+        img.src = imgs[i];
+      });
+      overlay.appendChild(b);
+    };
+    mk("prev", "‹", -1);
+    mk("next", "›", 1);
+  }
+  const close = () => {
+    overlay.remove();
+    document.removeEventListener("keydown", onKey);
+  };
+  const onKey = (e) => {
+    if (e.key === "Escape") close();
+  };
+  overlay.addEventListener("click", close);
+  document.addEventListener("keydown", onKey);
+  document.body.appendChild(overlay);
+};
+
 // Equipment-sales page: render posts from the backend when it's available.
 // If the API is missing/unconfigured the static example cards stay as-is.
 const initSalesPage = () => {
@@ -777,41 +821,6 @@ const initSalesPage = () => {
     available: "sales.statusAvailable",
     reserved: "sales.statusReserved",
     sold: "sales.statusSold",
-  };
-
-  const openLightbox = (imgs, start) => {
-    let i = start;
-    const overlay = document.createElement("div");
-    overlay.className = "lightbox";
-    const img = document.createElement("img");
-    img.src = imgs[i];
-    overlay.appendChild(img);
-    if (imgs.length > 1) {
-      const mk = (cls, label, step) => {
-        const b = document.createElement("button");
-        b.className = "lightbox-nav " + cls;
-        b.type = "button";
-        b.textContent = label;
-        b.addEventListener("click", (e) => {
-          e.stopPropagation();
-          i = (i + step + imgs.length) % imgs.length;
-          img.src = imgs[i];
-        });
-        overlay.appendChild(b);
-      };
-      mk("prev", "‹", -1);
-      mk("next", "›", 1);
-    }
-    const close = () => {
-      overlay.remove();
-      document.removeEventListener("keydown", onKey);
-    };
-    const onKey = (e) => {
-      if (e.key === "Escape") close();
-    };
-    overlay.addEventListener("click", close);
-    document.addEventListener("keydown", onKey);
-    document.body.appendChild(overlay);
   };
 
   const saleCard = (p) => {
@@ -848,7 +857,7 @@ const initSalesPage = () => {
     }
     if (p.desc) {
       const desc = document.createElement("p");
-      desc.className = "sale-desc";
+      desc.className = "sale-desc sale-desc--clamp"; // card shows a teaser, full text on the detail page
       desc.textContent = p.desc;
       body.appendChild(desc);
     }
@@ -863,8 +872,8 @@ const initSalesPage = () => {
     }
     const btn = document.createElement("a");
     btn.className = "btn btn-primary";
-    btn.href = "index.html#phones";
-    btn.setAttribute("data-i18n", "sales.inquire");
+    btn.href = "sale.html?id=" + encodeURIComponent(p.id);
+    btn.setAttribute("data-i18n", "sales.more");
     foot.append(price, btn);
     body.appendChild(foot);
 
@@ -974,6 +983,84 @@ const initTachoWidget = () => {
   document.querySelectorAll("[data-lang]").forEach((btn) => {
     btn.addEventListener("click", render);
   });
+};
+
+// Sale detail page (sale.html?id=...): photo gallery + full description.
+const initSaleDetailPage = () => {
+  const wrap = document.getElementById("sale-detail");
+  if (!wrap) {
+    return;
+  }
+  const missing = document.getElementById("sale-missing");
+  const showMissing = () => {
+    missing.hidden = false;
+    wrap.hidden = true;
+  };
+
+  const STATUS_KEY = {
+    available: "sales.statusAvailable",
+    reserved: "sales.statusReserved",
+    sold: "sales.statusSold",
+  };
+
+  const postId = new URLSearchParams(window.location.search).get("id");
+  if (!postId) {
+    showMissing();
+    return;
+  }
+
+  fetch("/api/sales?id=" + encodeURIComponent(postId))
+    .then((r) => {
+      if (!r.ok) throw new Error("not found");
+      return r.json();
+    })
+    .then(({ post }) => {
+      if (!post) throw new Error("not found");
+      document.title = post.title + " — Продаж техніки — МПП Мінітранс";
+      document.getElementById("sd-title").textContent = post.title;
+      const specs = document.getElementById("sd-specs");
+      specs.textContent = post.specs || "";
+      specs.hidden = !post.specs;
+      const price = document.getElementById("sd-price");
+      if (post.price) {
+        price.textContent = post.price;
+      } else {
+        price.setAttribute("data-i18n", "sales.priceOnRequest");
+      }
+      const desc = document.getElementById("sd-desc");
+      desc.textContent = post.desc || "";
+      desc.hidden = !post.desc;
+      const badge = document.getElementById("sd-badge");
+      badge.className = "sale-badge sale-badge--" + post.status;
+      badge.setAttribute("data-i18n", STATUS_KEY[post.status] || STATUS_KEY.available);
+
+      const photos = post.images && post.images.length ? post.images : ["assets/images/yard-daf-line.jpg"];
+      const main = document.getElementById("sd-photo");
+      let current = 0;
+      const setPhoto = (i) => {
+        current = i;
+        main.src = photos[i];
+        main.alt = post.title;
+        thumbs.querySelectorAll("img").forEach((t, k) => t.classList.toggle("is-active", k === i));
+      };
+      main.style.cursor = "zoom-in";
+      main.addEventListener("click", () => openLightbox(photos, current));
+      const thumbs = document.getElementById("sd-thumbs");
+      if (photos.length > 1) {
+        photos.forEach((src, i) => {
+          const t = document.createElement("img");
+          t.src = src;
+          t.alt = post.title;
+          t.addEventListener("click", () => setPhoto(i));
+          thumbs.appendChild(t);
+        });
+      }
+      setPhoto(0);
+
+      wrap.hidden = false;
+      setLanguage(localStorage.getItem("siteLang") || "uk");
+    })
+    .catch(showMissing);
 };
 
 // Tacho-service booking page: slot grid + request form.
@@ -1172,6 +1259,7 @@ initNavToggle();
 initReveal();
 initHeaderScroll();
 initSalesPage();
+initSaleDetailPage();
 initBookingPage();
 initTachoWidget();
 setYear();
