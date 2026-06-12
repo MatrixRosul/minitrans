@@ -1722,6 +1722,7 @@ a.slot {
   .site-nav.is-open .nav-links a:nth-child(7) { transition-delay: 0.29s; }
   .site-nav.is-open .nav-links a:nth-child(8) { transition-delay: 0.33s; }
   .site-nav.is-open .nav-links a:nth-child(9) { transition-delay: 0.37s; }
+  .site-nav.is-open .nav-links a:nth-child(10) { transition-delay: 0.41s; }
 
   .site-nav .nav-cta {
     width: 100%;
