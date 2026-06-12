@@ -182,10 +182,12 @@ class handler(BaseHTTPRequestHandler):
         if not util.is_authed(self):
             util.send_json(self, 401, {"error": "unauthorized"})
             return
-        booking_id = util.get_query(self).get("id")
+        q = util.get_query(self)
+        booking_id = q.get("id")
+        reason = (q.get("reason") or "").strip()[:300]
         booking = db.get_booking(booking_id) if booking_id else None
         if not booking or not db.delete_booking(booking_id):
             util.send_json(self, 404, {"error": "not found"})
             return
-        sent = mail.booking_cancelled(booking, by_client=False)
+        sent = mail.booking_cancelled(booking, by_client=False, reason=reason)
         util.send_json(self, 200, {"ok": True, "emailSent": sent})

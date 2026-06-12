@@ -208,24 +208,28 @@ def booking_confirmed(b, cancel_url):
     return send(b.get("email"), subject, text, html)
 
 
-def booking_cancelled(b, by_client):
-    """To the client when a booking is cancelled (by admin or via their link)."""
+def booking_cancelled(b, by_client, reason=""):
+    """To the client when a booking is cancelled (by admin or via their link).
+    `reason` — optional admin-entered explanation included in the email."""
+    import html as _html
+
     when = slot_text(b["day"], b["hour"])
     subject = "Запис на тахосервіс скасовано — %s" % when
-    reason = "Ви скасували запис." if by_client else "На жаль, ваш запис скасовано майстром."
+    intro = "Ви скасували запис." if by_client else "На жаль, ваш запис скасовано майстром."
+    reason_text = "\nПричина: %s\n" % reason if reason else ""
     text = (
-        "%s\n\nЗапис на %s скасовано, година знову вільна.\n"
-        "Щоб обрати інший час: https://minitrans.uz.ua/booking.html\nТелефон: %s\n" % (reason, when, TACHO_PHONE)
+        "%s\n%s\nЗапис на %s скасовано, година знову вільна.\n"
+        "Щоб обрати інший час: https://minitrans.uz.ua/booking.html\nТелефон: %s\n"
+        % (intro, reason_text, when, TACHO_PHONE)
     )
-    html = _wrap_html(
-        "Запис скасовано",
-        [
-            reason,
-            "Запис на <strong>%s</strong> скасовано." % when,
-            'Ви можете <a href="https://minitrans.uz.ua/booking.html" style="color:#1b5fd1">обрати інший час</a> '
-            "або зателефонувати нам.",
-        ],
+    lines = [intro, "Запис на <strong>%s</strong> скасовано." % when]
+    if reason:
+        lines.append("<strong>Причина:</strong> %s" % _html.escape(reason))
+    lines.append(
+        'Ви можете <a href="https://minitrans.uz.ua/booking.html" style="color:#1b5fd1">обрати інший час</a> '
+        "або зателефонувати нам."
     )
+    html = _wrap_html("Запис скасовано", lines)
     return send(b.get("email"), subject, text, html)
 
 
@@ -238,8 +242,8 @@ def notify_company(b, event):
     if event == "new":
         subject = "🆕 Новий запис на тахосервіс: %s — %s" % (when, b["company"])
         head = "До вас записались на тахосервіс"
-        tail = 'Підтвердіть запис в <a href="https://minitrans.uz.ua/admin.html" style="color:#1b5fd1">адмінці</a>.'
-        tail_text = "Підтвердіть запис в адмінці: https://minitrans.uz.ua/admin.html"
+        tail = 'Підтвердіть запис в <a href="https://minitrans.uz.ua/admin" style="color:#1b5fd1">адмінці</a>.'
+        tail_text = "Підтвердіть запис в адмінці: https://minitrans.uz.ua/admin"
     else:
         subject = "❌ Клієнт скасував запис: %s — %s" % (when, b["company"])
         head = "Клієнт скасував запис на тахосервіс"

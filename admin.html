@@ -38,6 +38,7 @@
     .btn-ghost { background: var(--gray-100); color: var(--gray-700); }
     .btn-danger { background: #fee2e2; color: var(--red); }
     .btn[disabled] { opacity: 0.6; cursor: wait; }
+    .btn[hidden] { display: none; }
     .card { background: var(--white); border: 1px solid rgba(148,163,184,.25); border-radius: 16px; padding: 18px; box-shadow: 0 6px 18px rgba(15,23,42,.06); }
     /* login */
     #login { max-width: 360px; margin: 12vh auto 0; text-align: center; }
@@ -81,6 +82,37 @@
       #editor .row { grid-template-columns: 1fr; }
       .post { flex-wrap: wrap; }
     }
+    /* ---------- calendar ---------- */
+    #cal-card { margin-bottom: 18px; }
+    #cal-legend { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; margin-bottom: 14px; font-size: 0.78rem; font-weight: 600; color: var(--gray-500); }
+    #cal-legend span { display: inline-flex; align-items: center; gap: 5px; }
+    #cal-legend span::before { content: ""; display: inline-block; width: 16px; height: 16px; border-radius: 4px; }
+    #cal-legend .leg-free::before  { background: #fff; border: 1.5px solid var(--gray-300); }
+    #cal-legend .leg-pending::before { background: #fef3c7; border: 1.5px solid #f5c64a; }
+    #cal-legend .leg-confirmed::before { background: #dcfce7; border: 1.5px solid #86efac; }
+    #cal-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    #cal { min-width: 720px; display: grid; gap: 4px; }
+    .cal-row { display: grid; grid-template-columns: 86px repeat(9, 1fr); gap: 4px; align-items: stretch; }
+    .cal-row.today .cal-day { background: #dbeafe; color: var(--blue-700); font-weight: 700; border-radius: 8px; }
+    .cal-day { font-size: 0.75rem; font-weight: 600; color: var(--gray-500); display: flex; flex-direction: column; justify-content: center; padding: 4px 6px; line-height: 1.3; }
+    .cal-day .today-label { font-size: 0.65rem; color: var(--blue-600); font-weight: 700; text-transform: uppercase; letter-spacing: .02em; }
+    .cal-cell { border-radius: 8px; padding: 5px 5px 4px; font-size: 0.72rem; font-weight: 600; display: flex; flex-direction: column; gap: 2px; min-height: 44px; border: 1.5px solid var(--gray-300); background: #fff; color: var(--gray-500); cursor: default; user-select: none; overflow: hidden; }
+    .cal-cell .cal-hour { font-size: 0.7rem; font-weight: 700; }
+    .cal-cell .cal-company { font-size: 0.68rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.2; }
+    .cal-cell.past { background: var(--gray-50); border-style: dashed; opacity: 0.6; }
+    .cal-cell.pending { background: #fef3c7; border-color: #f5c64a; color: #92400e; cursor: pointer; }
+    .cal-cell.pending:hover { background: #fde68a; }
+    .cal-cell.confirmed { background: #dcfce7; border-color: #86efac; color: #14532d; cursor: pointer; }
+    .cal-cell.confirmed:hover { background: #bbf7d0; }
+    /* ---------- booking modal ---------- */
+    #bk-overlay { position: fixed; inset: 0; background: rgba(10,27,51,.5); display: none; align-items: flex-start; justify-content: center; overflow-y: auto; padding: 4vh 12px; z-index: 50; }
+    #bk-overlay.open { display: flex; }
+    #bk-modal { width: min(480px, 100%); margin-bottom: 6vh; }
+    #bk-modal h3 { margin-bottom: 16px; }
+    .bk-field { display: grid; grid-template-columns: 110px 1fr; gap: 6px 10px; align-items: baseline; margin-bottom: 10px; font-size: 0.88rem; }
+    .bk-field .bk-label { font-weight: 700; color: var(--gray-500); font-size: 0.78rem; }
+    .bk-field .bk-val { color: var(--gray-700); word-break: break-word; }
+    .bk-foot { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; margin-top: 18px; }
   </style>
 </head>
 <body>
@@ -104,11 +136,11 @@
       </div>
 
       <div class="tabs">
-        <button class="tab active" data-tab="sales">Продаж техніки</button>
-        <button class="tab" data-tab="service">Запис на тахосервіс <span id="pending-count" class="badge reserved" hidden></span></button>
+        <button class="tab active" data-tab="service">Запис на тахосервіс <span id="pending-count" class="badge reserved" hidden></span></button>
+        <button class="tab" data-tab="sales">Продаж техніки</button>
       </div>
 
-      <div id="tab-sales">
+      <div id="tab-sales" hidden>
         <div class="topbar">
           <h2 style="margin:0">Оголошення</h2>
           <button class="btn btn-primary" id="add-post">+ Додати оголошення</button>
@@ -116,12 +148,23 @@
         <div class="list card" id="posts"><div class="empty">Завантаження…</div></div>
       </div>
 
-      <div id="tab-service" hidden>
+      <div id="tab-service">
         <div class="topbar">
           <h2 style="margin:0">Заявки на тахосервіс</h2>
           <button class="btn btn-ghost" id="reload-bookings">Оновити</button>
         </div>
         <p class="muted" style="margin-top:-6px">Жовте — нова заявка (слот заброньовано). Підтвердіть її, або відхиліть — і година знову стане вільною.</p>
+
+        <!-- Calendar -->
+        <div class="card" id="cal-card">
+          <div id="cal-legend">
+            <span class="leg-free">вільно</span>
+            <span class="leg-pending">нова заявка</span>
+            <span class="leg-confirmed">підтверджено</span>
+          </div>
+          <div id="cal-scroll"><div id="cal"></div></div>
+        </div>
+
         <div class="list card" id="bookings"><div class="empty">Завантаження…</div></div>
       </div>
     </div>
@@ -165,6 +208,19 @@
         <div class="editor-foot">
           <button class="btn btn-ghost" id="editor-cancel">Скасувати</button>
           <button class="btn btn-primary" id="editor-save">Зберегти</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Booking modal -->
+    <div id="bk-overlay">
+      <div id="bk-modal" class="card">
+        <h3>Деталі запису</h3>
+        <div id="bk-body"></div>
+        <div class="bk-foot">
+          <button class="btn btn-primary" id="bk-confirm-btn">Підтвердити</button>
+          <button class="btn btn-danger" id="bk-cancel-btn">Скасувати запис</button>
+          <button class="btn btn-ghost" id="bk-close-btn">Закрити</button>
         </div>
       </div>
     </div>
@@ -216,22 +272,13 @@
     // ---------- health ----------
     const loadHealth = async () => {
       try {
+        // show only problems; a healthy setup keeps the topbar clean
         const h = await api("/api/health");
         const chips = [];
-        chips.push(h.dev
-          ? '<span class="chip warn">локальний режим</span>'
-          : '<span class="chip ok">продакшн</span>');
-        chips.push(h.store === "postgres"
-          ? '<span class="chip ok">база: Postgres</span>'
-          : '<span class="chip bad">база не налаштована</span>');
-        chips.push(h.blob
-          ? '<span class="chip ok">фото: Blob</span>'
-          : h.store === "postgres"
-            ? '<span class="chip warn">фото: Postgres</span>'
-            : '<span class="chip bad">фото не налаштовані</span>');
-        chips.push(h.mail
-          ? '<span class="chip ok">пошта: Gmail</span>'
-          : '<span class="chip warn">пошта не налаштована</span>');
+        if (h.dev) chips.push('<span class="chip warn">локальний режим</span>');
+        if (h.store !== "postgres") chips.push('<span class="chip bad">база не налаштована</span>');
+        if (!h.blob && h.store !== "postgres") chips.push('<span class="chip bad">фото не налаштовані</span>');
+        if (!h.mail) chips.push('<span class="chip warn">пошта не налаштована</span>');
         if (!h.password) chips.push('<span class="chip bad">ADMIN_PASSWORD не задано</span>');
         $("#health").innerHTML = chips.join("");
       } catch { /* not fatal */ }
@@ -301,6 +348,163 @@
       return WD[d.getDay()] + " " + String(d.getDate()).padStart(2, "0") + "." + String(d.getMonth() + 1).padStart(2, "0");
     };
 
+    // ---------- booking modal ----------
+    let bkCurrent = null;
+
+    const closeBkModal = () => {
+      $("#bk-overlay").classList.remove("open");
+      bkCurrent = null;
+    };
+
+    const openBkModal = (b) => {
+      bkCurrent = b;
+      const body = $("#bk-body");
+      body.innerHTML = "";
+
+      const addField = (label, valueNode) => {
+        const row = document.createElement("div");
+        row.className = "bk-field";
+        const lbl = document.createElement("div");
+        lbl.className = "bk-label";
+        lbl.textContent = label;
+        const val = document.createElement("div");
+        val.className = "bk-val";
+        if (typeof valueNode === "string") {
+          val.textContent = valueNode;
+        } else {
+          val.appendChild(valueNode);
+        }
+        row.append(lbl, val);
+        body.appendChild(row);
+      };
+
+      addField("Час", fmtDay(b.day) + ", " + String(b.hour).padStart(2, "0") + ":00");
+
+      const badge = document.createElement("span");
+      badge.className = "badge " + (b.status === "confirmed" ? "available" : "reserved");
+      badge.textContent = b.status === "confirmed" ? "підтверджено" : "нова заявка";
+      addField("Статус", badge);
+
+      addField("Фірма / ім'я", b.company);
+
+      const tel = document.createElement("a");
+      tel.href = "tel:" + b.phone.replace(/[^+\d]/g, "");
+      tel.textContent = b.phone;
+      addField("Телефон", tel);
+
+      if (b.email) {
+        const mail = document.createElement("a");
+        mail.href = "mailto:" + b.email;
+        mail.textContent = b.email;
+        addField("Пошта", mail);
+      } else {
+        addField("Пошта", "—");
+      }
+
+      addField("Коментар", b.comment || "—");
+      addField("Створено", new Date(b.createdAt).toLocaleString("uk-UA"));
+
+      $("#bk-confirm-btn").hidden = b.status !== "pending";
+      $("#bk-overlay").classList.add("open");
+    };
+
+    $("#bk-overlay").addEventListener("click", (e) => { if (e.target.id === "bk-overlay") closeBkModal(); });
+    $("#bk-close-btn").addEventListener("click", closeBkModal);
+
+    $("#bk-confirm-btn").addEventListener("click", async () => {
+      if (!bkCurrent) return;
+      try {
+        await api("/api/bookings", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: bkCurrent.id }),
+        });
+      } catch (ex) {
+        alert("Не вдалося підтвердити: " + ex.message);
+      }
+      closeBkModal();
+      loadBookings();
+    });
+
+    $("#bk-cancel-btn").addEventListener("click", async () => {
+      if (!bkCurrent) return;
+      const reason = prompt(
+        "Скасувати запис " + fmtDay(bkCurrent.day) + " " + bkCurrent.hour + ":00 (" + bkCurrent.company + ")?\n" +
+        "Клієнт отримає листа, а година знову стане вільною.\n\n" +
+        "Причина скасування (потрапить у лист, можна лишити порожнім):", "");
+      if (reason === null) return;
+      try {
+        await api(
+          "/api/bookings?id=" + encodeURIComponent(bkCurrent.id) + "&reason=" + encodeURIComponent(reason.trim()),
+          { method: "DELETE" }
+        );
+      } catch (ex) {
+        alert("Не вдалося скасувати: " + ex.message);
+      }
+      closeBkModal();
+      loadBookings();
+    });
+
+    // ---------- render calendar ----------
+    const HOURS = [9, 10, 11, 12, 13, 14, 15, 16, 17];
+
+    const renderCalendar = (data) => {
+      const cal = $("#cal");
+      cal.innerHTML = "";
+      const days = data.days || [];
+      const bookings = data.bookings || [];
+      // Build lookup: day+hour → booking
+      const bkMap = {};
+      bookings.forEach((b) => { bkMap[b.day + "_" + b.hour] = b; });
+
+      days.forEach((dayObj) => {
+        const isToday = dayObj.date === data.today;
+        const row = document.createElement("div");
+        row.className = "cal-row" + (isToday ? " today" : "");
+
+        const dayLabel = document.createElement("div");
+        dayLabel.className = "cal-day";
+        const dayText = document.createElement("span");
+        dayText.textContent = fmtDay(dayObj.date);
+        dayLabel.appendChild(dayText);
+        if (isToday) {
+          const todayTag = document.createElement("span");
+          todayTag.className = "today-label";
+          todayTag.textContent = "сьогодні";
+          dayLabel.appendChild(todayTag);
+        }
+        row.appendChild(dayLabel);
+
+        HOURS.forEach((h) => {
+          const slotObj = (dayObj.slots || []).find((s) => s.hour === h);
+          const status = slotObj ? slotObj.status : "free";
+          const bk = bkMap[dayObj.date + "_" + h];
+
+          const cell = document.createElement("div");
+          // booked cells take the booking status (pending/confirmed); free/past — the slot status
+          cell.className = "cal-cell " + (bk ? bk.status : status);
+
+          const hourSpan = document.createElement("span");
+          hourSpan.className = "cal-hour";
+          hourSpan.textContent = String(h).padStart(2, "0") + ":00";
+          cell.appendChild(hourSpan);
+
+          if (bk) {
+            const comp = document.createElement("span");
+            comp.className = "cal-company";
+            comp.textContent = bk.company;
+            cell.appendChild(comp);
+            cell.addEventListener("click", () => openBkModal(bk));
+          }
+
+          row.appendChild(cell);
+        });
+
+        cal.appendChild(row);
+      });
+    };
+
+    // ---------- loadBookings (feeds calendar + list) ----------
     const loadBookings = async () => {
       const box = $("#bookings");
       try {
@@ -310,6 +514,11 @@
         const pc = $("#pending-count");
         pc.hidden = !pending;
         pc.textContent = pending;
+
+        // render calendar
+        renderCalendar(data);
+
+        // render list
         if (!bookings.length) {
           box.innerHTML = '<div class="empty">Поки немає заявок.</div>';
           return;
@@ -368,9 +577,15 @@
           rej.className = "btn btn-danger";
           rej.textContent = b.status === "pending" ? "Відхилити" : "Скасувати";
           rej.onclick = async () => {
-            if (!confirm("Видалити запис " + fmtDay(b.day) + " " + b.hour + ":00 (" + b.company + ")? Година знову стане вільною.")) return;
+            const reason = prompt(
+              "Скасувати запис " + fmtDay(b.day) + " " + b.hour + ":00 (" + b.company + ")?\n" +
+              "Година знову стане вільною.\n\nПричина скасування (потрапить у лист, можна лишити порожнім):", "");
+            if (reason === null) return;
             try {
-              await api("/api/bookings?id=" + encodeURIComponent(b.id), { method: "DELETE" });
+              await api(
+                "/api/bookings?id=" + encodeURIComponent(b.id) + "&reason=" + encodeURIComponent(reason.trim()),
+                { method: "DELETE" }
+              );
             } catch (ex) {
               alert("Не вдалося скасувати: " + ex.message);
             } finally {

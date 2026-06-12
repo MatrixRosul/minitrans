@@ -1,5 +1,6 @@
 User-agent: *
 Allow: /
 Disallow: /admin.html
+Disallow: /admin
 Disallow: /api/
 Sitemap: https://minitrans.uz.ua/sitemap.xml

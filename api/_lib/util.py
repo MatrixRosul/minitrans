@@ -109,8 +109,18 @@ def session_cookie(clear=False):
     return "; ".join(parts)
 
 
+def _fix_encoding(s):
+    """http.server decodes the request line as latin-1; if a client sent raw
+    UTF-8 bytes in the query (curl does), re-decode them. Proper UTF-8 strings
+    fail the latin-1 encode and are returned unchanged."""
+    try:
+        return s.encode("latin-1").decode("utf-8")
+    except (UnicodeEncodeError, UnicodeDecodeError):
+        return s
+
+
 def get_query(h):
-    return dict(parse_qsl(urlsplit(h.path).query))
+    return {k: _fix_encoding(v) for k, v in parse_qsl(urlsplit(h.path).query)}
 
 
 def read_body(h):

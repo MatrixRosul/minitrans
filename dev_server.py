@@ -67,7 +67,15 @@ class DevHandler(BaseHTTPRequestHandler):
             path = "/index.html"
         file = os.path.normpath(os.path.join(ROOT, path.lstrip("/")))
         if not file.startswith(ROOT) or not os.path.isfile(file):
-            return self._plain(404, "not found")
+            # Try with .html extension if no extension in original path
+            if not os.path.splitext(path)[1]:
+                html_file = os.path.normpath(os.path.join(ROOT, (path + ".html").lstrip("/")))
+                if html_file.startswith(ROOT) and os.path.isfile(html_file):
+                    file = html_file
+                else:
+                    return self._plain(404, "not found")
+            else:
+                return self._plain(404, "not found")
         with open(file, "rb") as f:
             data = f.read()
         self.send_response(200)
