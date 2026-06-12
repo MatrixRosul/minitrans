@@ -10,6 +10,7 @@ const translations = {
     "nav.advantages": "Переваги",
     "nav.vacancies": "Вакансії",
     "nav.sales": "Продаж техніки",
+    "nav.extraLabel": "Зателефонувати",
     "nav.contactCta": "Зв’язатись",
     "nav.toggle": "Відкрити меню",
     "nav.title": "Меню",
@@ -139,7 +140,7 @@ const translations = {
     "contacts.lead": "Залиште запит або телефонуйте — відповімо максимально швидко.",
     "contacts.rolesTitle": "Відповідальні контакти",
     "contacts.rolesLead": "Оберіть напрямок і телефонуйте безпосередньо.",
-    "contacts.role.vacancies": "Вакансії",
+    "contacts.role.vacancies": "Вакансії та продаж техніки",
     "contacts.role.transport": "Замовлення перевезення",
     "contacts.role.service": "Сервіс",
     "contacts.role.tacho": "Тахосервіс",
@@ -274,7 +275,7 @@ const translations = {
     "booking.form.noSlot": "Спочатку оберіть вільну годину в таблиці вище",
     "booking.successTitle": "Заявку прийнято! ✅",
     "booking.successText": "Ваш час зарезервовано та очікує підтвердження майстром. Ми зв’яжемося з вами найближчим часом.",
-    "serviceCenter.bookTacho": "Запис на тахосервіс онлайн",
+    "serviceCenter.bookTacho": "Записатись онлайн",
     "serviceWidget.title": "Найближчі вільні години на тахосервіс",
     "serviceWidget.all": "Усі дати та запис →"
   },
@@ -289,6 +290,7 @@ const translations = {
     "nav.advantages": "Advantages",
     "nav.vacancies": "Careers",
     "nav.sales": "Equipment Sales",
+    "nav.extraLabel": "Call us",
     "nav.contactCta": "Contact",
     "nav.toggle": "Open menu",
     "nav.title": "Menu",
@@ -418,7 +420,7 @@ const translations = {
     "contacts.lead": "Leave a request or call us — we respond quickly.",
     "contacts.rolesTitle": "Direct contacts",
     "contacts.rolesLead": "Choose a direction and call the responsible person.",
-    "contacts.role.vacancies": "Vacancies",
+    "contacts.role.vacancies": "Careers & equipment sales",
     "contacts.role.transport": "Transport orders",
     "contacts.role.service": "Service",
     "contacts.role.tacho": "Tacho service",
@@ -553,7 +555,7 @@ const translations = {
     "booking.form.noSlot": "Please pick a free hour in the table above first",
     "booking.successTitle": "Request received! ✅",
     "booking.successText": "Your time slot is reserved and awaiting confirmation by our technician. We'll contact you shortly.",
-    "serviceCenter.bookTacho": "Book tacho service online",
+    "serviceCenter.bookTacho": "Book online",
     "serviceWidget.title": "Upcoming free tacho-service hours",
     "serviceWidget.all": "All dates & booking →"
   }
@@ -633,6 +635,25 @@ const initNavToggle = () => {
   let lastFocused = null;
   if (!navToggle || !siteNav) {
     return;
+  }
+
+  // bottom contact block of the mobile menu — injected here so the shared
+  // header markup in every page stays untouched
+  const panel = siteNav.querySelector(".nav-panel");
+  if (panel && !panel.querySelector(".nav-extra")) {
+    const extra = document.createElement("div");
+    extra.className = "nav-extra";
+    const label = document.createElement("span");
+    label.className = "nav-extra-label";
+    label.setAttribute("data-i18n", "nav.extraLabel");
+    label.textContent = "Зателефонувати";
+    const phone = document.createElement("a");
+    phone.className = "nav-extra-phone";
+    phone.href = "tel:+380503178385";
+    phone.textContent = "+38 (050) 317 83 85";
+    extra.append(label, phone);
+    panel.appendChild(extra);
+    setLanguage(localStorage.getItem("siteLang") || "uk");
   }
 
   const setNavState = (isOpen) => {
@@ -832,8 +853,8 @@ const initSalesPage = () => {
     }
     const btn = document.createElement("a");
     btn.className = "btn btn-primary";
-    btn.href = "index.html#contacts";
-    btn.setAttribute("data-i18n", "sales.inquire");
+    btn.href = "tel:+380503178385"; // Віктор — продаж техніки
+    btn.textContent = "+38 (050) 317 83 85";
     foot.append(price, btn);
     body.appendChild(foot);
 
