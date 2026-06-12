@@ -74,8 +74,23 @@ def get_cookies(h):
     return {k: v.value for k, v in c.items()}
 
 
+def _origin_ok(h):
+    """CSRF defense-in-depth on top of SameSite=Lax: if the browser sent an
+    Origin header (it always does for cross-site fetch), it must match Host."""
+    origin = h.headers.get("Origin")
+    if not origin:
+        return True
+    host = (h.headers.get("Host") or "").split(":")[0].lower()
+    try:
+        from urllib.parse import urlsplit as _us
+
+        return (_us(origin).hostname or "").lower() == host
+    except Exception:
+        return False
+
+
 def is_authed(h):
-    return check_token(get_cookies(h).get("admin_session"))
+    return _origin_ok(h) and check_token(get_cookies(h).get("admin_session"))
 
 
 def cancel_token(booking_id):
@@ -89,9 +104,11 @@ def check_cancel_token(booking_id, token):
 
 
 def base_url(h):
-    host = h.headers.get("Host") or "minitrans.uz.ua"
-    scheme = "https" if on_vercel() else "http"
-    return "%s://%s" % (scheme, host)
+    # pin the canonical host in production — emails must never contain a
+    # link built from an attacker-forged Host header
+    if on_vercel():
+        return "https://minitrans.uz.ua"
+    return "http://%s" % (h.headers.get("Host") or "localhost:8080")
 
 
 def session_cookie(clear=False):

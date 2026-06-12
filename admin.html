@@ -82,6 +82,22 @@
       #editor .row { grid-template-columns: 1fr; }
       .post { flex-wrap: wrap; }
     }
+    /* ---------- applications (compact rows, expand on click) ---------- */
+    .app-row { cursor: pointer; flex-wrap: wrap; border: 1px solid transparent; border-radius: 12px; padding: 8px 10px; transition: background .15s; }
+    .app-row:hover { background: rgba(27,95,209,.04); }
+    .app-row.open { background: var(--gray-50); border-color: rgba(148,163,184,.3); }
+    .app-chevron { color: var(--gray-500); font-size: .9rem; transition: transform .2s; flex: none; align-self: center; }
+    .app-row.open .app-chevron { transform: rotate(180deg); }
+    .app-details { display: none; width: 100%; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--gray-300); }
+    .app-row.open .app-details { display: grid; gap: 8px; }
+    .app-field { display: grid; grid-template-columns: 90px 1fr; gap: 10px; font-size: .88rem; align-items: start; }
+    .app-field-label { font-size: .7rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--gray-500); padding-top: 2px; }
+    .app-field a { color: var(--blue-600); }
+    .app-comment { margin: 0; white-space: pre-wrap; line-height: 1.5; }
+    .app-files { display: flex; flex-direction: column; gap: 4px; }
+    .app-details-foot { display: flex; justify-content: flex-end; margin-top: 4px; }
+    @media (max-width: 560px) { .app-field { grid-template-columns: 1fr; gap: 2px; } }
+
     /* ---------- calendar ---------- */
     #cal-card { margin-bottom: 18px; }
     #cal-legend { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; margin-bottom: 14px; font-size: 0.78rem; font-weight: 600; color: var(--gray-500); }
@@ -733,7 +749,8 @@
         box.innerHTML = "";
         applications.forEach((a) => {
           const el = document.createElement("div");
-          el.className = "post";
+          el.className = "post app-row";
+
           const info = document.createElement("div");
           info.className = "info";
           const t = document.createElement("div");
@@ -742,46 +759,70 @@
           const meta = document.createElement("div");
           meta.className = "meta";
           const dateSpan = document.createElement("span");
-          dateSpan.textContent = new Date(a.createdAt).toLocaleString("uk-UA");
+          dateSpan.textContent = new Date(a.createdAt).toLocaleDateString("uk-UA");
           meta.appendChild(dateSpan);
           const tel = document.createElement("a");
           tel.href = "tel:" + a.phone.replace(/[^+\d]/g, "");
           tel.textContent = a.phone;
           meta.appendChild(tel);
-          if (a.email) {
-            const mail = document.createElement("a");
-            mail.href = "mailto:" + a.email;
-            mail.textContent = a.email;
-            meta.appendChild(mail);
+          if (a.files && a.files.length) {
+            const fcount = document.createElement("span");
+            fcount.textContent = "📎 " + a.files.length;
+            meta.appendChild(fcount);
           }
           info.append(t, meta);
+
+          const chevron = document.createElement("span");
+          chevron.className = "app-chevron";
+          chevron.textContent = "▾";
+
+          // expandable details: full info + files + delete
+          const details = document.createElement("div");
+          details.className = "app-details";
+          const addField = (label, node) => {
+            const row = document.createElement("div");
+            row.className = "app-field";
+            const l = document.createElement("span");
+            l.className = "app-field-label";
+            l.textContent = label;
+            row.append(l, node);
+            details.appendChild(row);
+          };
+          const phoneLink = document.createElement("a");
+          phoneLink.href = "tel:" + a.phone.replace(/[^+\d]/g, "");
+          phoneLink.textContent = a.phone;
+          addField("Телефон", phoneLink);
+          if (a.email) {
+            const mailLink = document.createElement("a");
+            mailLink.href = "mailto:" + a.email;
+            mailLink.textContent = a.email;
+            addField("Пошта", mailLink);
+          }
+          const created = document.createElement("span");
+          created.textContent = new Date(a.createdAt).toLocaleString("uk-UA");
+          addField("Подано", created);
           if (a.comment) {
             const cm = document.createElement("p");
-            cm.className = "muted";
-            cm.style.cssText = "margin: 6px 0 0; font-size: 0.85rem; width: 100%;";
+            cm.className = "app-comment";
             cm.textContent = a.comment;
-            info.appendChild(cm);
+            addField("Про себе", cm);
           }
           if (a.files && a.files.length) {
             const filesDiv = document.createElement("div");
-            filesDiv.style.cssText = "margin-top: 6px; display: flex; gap: 8px; flex-wrap: wrap;";
+            filesDiv.className = "app-files";
             a.files.forEach((f) => {
               const link = document.createElement("a");
               link.href = "/api/appfile?id=" + encodeURIComponent(f.id);
-              const sizeKB = Math.ceil(f.size / 1024);
-              link.textContent = "📎 " + f.name + " (" + sizeKB + " KB)";
-              link.style.cssText = "font-size: 0.82rem;";
+              link.textContent = "📎 " + f.name + " (" + Math.ceil(f.size / 1024) + " KB)";
               filesDiv.appendChild(link);
             });
-            info.appendChild(filesDiv);
+            addField("Файли", filesDiv);
           }
-          const actions = document.createElement("div");
-          actions.className = "actions";
           const delBtn = document.createElement("button");
           delBtn.className = "btn btn-danger";
-          delBtn.textContent = "Видалити";
+          delBtn.textContent = "Видалити заявку";
           delBtn.onclick = async () => {
-            if (!confirm("Видалити заявку від " + a.name + "?")) return;
+            if (!confirm('Видалити заявку «' + a.name + '»? Разом із файлами.')) return;
             try {
               await api("/api/applications?id=" + encodeURIComponent(a.id), { method: "DELETE" });
             } catch (ex) {
@@ -789,8 +830,16 @@
             }
             loadApps();
           };
-          actions.appendChild(delBtn);
-          el.append(info, actions);
+          const foot = document.createElement("div");
+          foot.className = "app-details-foot";
+          foot.appendChild(delBtn);
+          details.appendChild(foot);
+
+          el.append(info, chevron, details);
+          el.addEventListener("click", (ev) => {
+            if (ev.target.closest("a, button")) return; // links/buttons keep their behavior
+            el.classList.toggle("open");
+          });
           box.appendChild(el);
         });
       } catch (e) {

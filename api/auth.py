@@ -1,6 +1,7 @@
 import hmac
 import os
 import sys
+import time
 from http.server import BaseHTTPRequestHandler
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "_lib"))
@@ -19,6 +20,7 @@ class handler(BaseHTTPRequestHandler):
         body = util.read_json(self)
         given = str(body.get("password") or "")
         if not hmac.compare_digest(given, password):
+            time.sleep(1.5)  # slow down brute force on the shared password
             util.send_json(self, 401, {"error": "Невірний пароль"})
             return
         util.send_json(self, 200, {"ok": True}, {"Set-Cookie": util.session_cookie()})
