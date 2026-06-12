@@ -108,7 +108,9 @@ class handler(BaseHTTPRequestHandler):
         date_s = str(body.get("date") or "")
         hour = body.get("hour")
 
-        if not company or not phone:
+        # admin booking from the calendar is quick: every field is optional
+        # (a comment is usually enough); the public form still requires contacts
+        if not is_admin_direct and (not company or not phone):
             util.send_json(self, 400, {"error": "Вкажіть назву фірми і телефон"})
             return
         if email and not re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", email):

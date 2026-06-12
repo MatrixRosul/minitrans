@@ -264,19 +264,17 @@
     <div id="nb-overlay">
       <div id="nb-modal" class="card">
         <h3 id="nb-title">Новий запис</h3>
-        <label>Фірма / ім'я *
-          <input id="nb-company" type="text" placeholder="ТОВ Перевізник або Іван Петренко" />
+        <label>Коментар
+          <textarea id="nb-comment" rows="3" placeholder="напр. Петро, DAF — калібрування тахографа" autofocus></textarea>
         </label>
-        <label>Телефон *
+        <p class="hint">Цього достатньо — година заброкується одразу. Контакти нижче за бажанням.</p>
+        <label>Ім'я / фірма <span class="muted">(необов'язково)</span>
+          <input id="nb-company" type="text" placeholder="Іван Петренко" />
+        </label>
+        <label>Телефон <span class="muted">(необов'язково)</span>
           <input id="nb-phone" type="tel" placeholder="+380501234567" />
         </label>
-        <label>Пошта
-          <input id="nb-email" type="email" placeholder="email@example.com" />
-        </label>
-        <p class="hint">Клієнт отримає лист-підтвердження, якщо вказана пошта</p>
-        <label>Коментар
-          <textarea id="nb-comment" rows="3" placeholder="Додаткова інформація…"></textarea>
-        </label>
+        <input id="nb-email" type="hidden" value="" />
         <div class="err" id="nb-err"></div>
         <div class="bk-foot">
           <button class="btn btn-primary" id="nb-submit">Записати</button>
@@ -458,12 +456,16 @@
       badge.textContent = b.status === "confirmed" ? "підтверджено" : "нова заявка";
       addField("Статус", badge);
 
-      addField("Фірма / ім'я", b.company);
+      addField("Фірма / ім'я", b.company || "—");
 
-      const tel = document.createElement("a");
-      tel.href = "tel:" + b.phone.replace(/[^+\d]/g, "");
-      tel.textContent = b.phone;
-      addField("Телефон", tel);
+      if (b.phone) {
+        const tel = document.createElement("a");
+        tel.href = "tel:" + b.phone.replace(/[^+\d]/g, "");
+        tel.textContent = b.phone;
+        addField("Телефон", tel);
+      } else {
+        addField("Телефон", "—");
+      }
 
       if (b.email) {
         const mail = document.createElement("a");
@@ -551,9 +553,7 @@
       const comment = $("#nb-comment").value.trim();
       const errEl = $("#nb-err");
       errEl.textContent = "";
-      if (!company) { errEl.textContent = "Введіть фірму або ім'я"; return; }
-      if (!phone) { errEl.textContent = "Введіть телефон"; return; }
-      $("#nb-submit").disabled = true;
+      $("#nb-submit").disabled = true; // усі поля необов'язкові — достатньо коментаря або й порожньої броні
       try {
         await api("/api/bookings", {
           method: "POST",
@@ -615,7 +615,7 @@
           if (bk) {
             const comp = document.createElement("span");
             comp.className = "cal-company";
-            comp.textContent = bk.company;
+            comp.textContent = bk.company || bk.comment || "Бронь";
             cell.appendChild(comp);
             cell.addEventListener("click", () => openBkModal(bk));
           } else if (!bk && status === "free") {
@@ -657,16 +657,18 @@
           info.className = "info";
           const t = document.createElement("div");
           t.className = "title";
-          t.textContent = fmtDay(b.day) + ", " + String(b.hour).padStart(2, "0") + ":00 — " + b.company;
+          t.textContent = fmtDay(b.day) + ", " + String(b.hour).padStart(2, "0") + ":00 — " + (b.company || b.comment || "Бронь адміна");
           const meta = document.createElement("div");
           meta.className = "meta";
           meta.innerHTML = b.status === "confirmed"
             ? '<span class="badge available">підтверджено</span>'
             : '<span class="badge reserved">нова заявка</span>';
-          const phone = document.createElement("a");
-          phone.href = "tel:" + b.phone.replace(/[^+\d]/g, "");
-          phone.textContent = b.phone;
-          meta.appendChild(phone);
+          if (b.phone) {
+            const phone = document.createElement("a");
+            phone.href = "tel:" + b.phone.replace(/[^+\d]/g, "");
+            phone.textContent = b.phone;
+            meta.appendChild(phone);
+          }
           if (b.email) {
             const em = document.createElement("span");
             em.textContent = b.email;
