@@ -573,7 +573,8 @@ section[id],
 .advantage-card:hover,
 .card-media:hover,
 .testimonial-card:hover,
-.vacancy-card:hover {
+.vacancy-card:hover,
+.sale-card:hover {
   transform: translateY(-6px);
   box-shadow: var(--shadow-hover);
   border-color: rgba(27, 95, 209, 0.28);
@@ -584,7 +585,8 @@ section[id],
   .advantage-card:hover,
   .card-media:hover,
   .testimonial-card:hover,
-  .vacancy-card:hover {
+  .vacancy-card:hover,
+  .sale-card:hover {
     transform: none;
     box-shadow: var(--shadow-card);
     border-color: rgba(148, 163, 184, 0.2);
@@ -1032,6 +1034,423 @@ section[id],
 [data-reveal].is-visible {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* Equipment-sales listing cards */
+.sale-card {
+  padding: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.sale-media {
+  position: relative;
+}
+
+.sale-media img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 0;
+  display: block;
+}
+
+.sale-badge {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--white);
+  background: rgba(27, 95, 209, 0.92);
+  backdrop-filter: blur(4px);
+}
+
+.sale-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 22px 24px 24px;
+  flex: 1;
+}
+
+.sale-specs {
+  margin: 0;
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--gray-500);
+}
+
+.sale-desc {
+  margin: 0;
+  color: var(--gray-700);
+}
+
+.sale-footer {
+  margin-top: auto;
+  padding-top: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.sale-price {
+  font-family: "Sora", "Manrope", sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--blue-700);
+}
+
+.sale-footer .btn {
+  padding: 10px 18px;
+}
+
+.sale-badge--reserved {
+  background: rgba(217, 119, 6, 0.92);
+}
+
+.sale-badge--sold {
+  background: rgba(100, 116, 139, 0.92);
+}
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: rgba(10, 27, 51, 0.88);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: zoom-out;
+}
+
+.lightbox img {
+  max-width: 92vw;
+  max-height: 88vh;
+  border-radius: 12px;
+  box-shadow: var(--shadow-soft);
+}
+
+.lightbox-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--blue-800);
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.lightbox-nav.prev {
+  left: 14px;
+}
+
+.lightbox-nav.next {
+  right: 14px;
+}
+
+/* Tacho-service booking */
+.booking-phone {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.slot-legend {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+  font-size: 0.88rem;
+  color: var(--gray-500);
+}
+
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.dot-free {
+  background: var(--white);
+  border: 1.5px solid var(--blue-600);
+}
+
+.dot-pending {
+  background: #fbbf24;
+}
+
+.dot-busy {
+  background: var(--gray-300);
+}
+
+.slot-grid {
+  display: grid;
+  gap: 8px;
+  background: var(--white);
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  box-shadow: var(--shadow-card);
+}
+
+.slot-day {
+  display: grid;
+  grid-template-columns: 104px 1fr;
+  gap: 14px;
+  align-items: center;
+  padding: 9px 12px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  transition: background 0.15s ease;
+}
+
+.slot-day:nth-child(odd) {
+  background: rgba(148, 163, 184, 0.07);
+}
+
+.slot-day.is-today {
+  background: rgba(27, 95, 209, 0.07);
+  border-color: rgba(27, 95, 209, 0.25);
+}
+
+.slot-day-label {
+  display: grid;
+  gap: 1px;
+  line-height: 1.2;
+}
+
+.slot-dow {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gray-500);
+}
+
+.slot-day.is-today .slot-dow {
+  color: var(--blue-600);
+}
+
+.slot-date {
+  font-family: "Sora", "Manrope", sans-serif;
+  font-weight: 700;
+  font-size: 1.02rem;
+  color: var(--blue-800);
+}
+
+.slot-list {
+  display: grid;
+  grid-template-columns: repeat(9, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.slot {
+  font: inherit;
+  font-size: 0.83rem;
+  font-weight: 600;
+  padding: 9px 4px;
+  border-radius: 10px;
+  border: 1.5px solid rgba(27, 95, 209, 0.55);
+  background: var(--white);
+  color: var(--blue-700);
+  cursor: pointer;
+  text-align: center;
+  transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.slot.is-free:hover {
+  background: rgba(27, 95, 209, 0.1);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(27, 95, 209, 0.18);
+}
+
+.slot.is-selected {
+  background: var(--blue-600);
+  border-color: var(--blue-600);
+  color: var(--white);
+  box-shadow: 0 8px 18px rgba(27, 95, 209, 0.35);
+}
+
+.slot.is-selected::after {
+  content: " ✓";
+}
+
+.slot.is-pending {
+  background: #fef3c7;
+  border-color: #f5c64a;
+  color: #92400e;
+  cursor: not-allowed;
+}
+
+.slot.is-busy {
+  background: var(--gray-100);
+  border-color: var(--gray-200);
+  color: var(--gray-500);
+  cursor: not-allowed;
+}
+
+.slot.is-past {
+  background: transparent;
+  border-color: rgba(148, 163, 184, 0.22);
+  border-style: dashed;
+  color: var(--gray-300);
+  cursor: not-allowed;
+}
+
+.booking-selected {
+  margin-top: 18px;
+  padding: 14px 18px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  color: var(--blue-800);
+}
+
+.booking-selected[hidden] {
+  display: none;
+}
+
+.booking-selected strong {
+  font-family: "Sora", "Manrope", sans-serif;
+  text-transform: capitalize;
+}
+
+/* Mini tacho calendar on the home page */
+.tacho-widget {
+  margin-top: 30px;
+}
+
+.tacho-widget[hidden] {
+  display: none;
+}
+
+.slot-grid--compact {
+  padding: 18px;
+}
+
+.tacho-widget-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.tacho-widget-head h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: var(--blue-800);
+}
+
+.tacho-widget-all {
+  font-weight: 600;
+  color: var(--blue-600);
+  white-space: nowrap;
+}
+
+.tacho-widget-all:hover {
+  color: var(--blue-700);
+}
+
+a.slot {
+  display: block;
+  text-decoration: none;
+}
+
+.hp-field {
+  position: absolute !important;
+  left: -9999px !important;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.booking-error {
+  color: #dc2626;
+  font-size: 0.9rem;
+  min-height: 1.2em;
+  margin-bottom: 10px;
+}
+
+.booking-success {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: #dcfce7;
+  color: #166534;
+}
+
+.booking-success p {
+  margin: 6px 0 0;
+}
+
+.muted {
+  color: var(--gray-500);
+}
+
+@media (max-width: 760px) {
+  .slot-day {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    padding: 12px;
+  }
+
+  .slot-day-label {
+    grid-auto-flow: column;
+    justify-content: start;
+    align-items: baseline;
+    gap: 8px;
+  }
+
+  .slot-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.sales-note {
+  margin-top: 28px;
+  padding: 16px 18px;
+  border-radius: 14px;
+  background: rgba(27, 95, 209, 0.06);
+  border: 1px dashed rgba(27, 95, 209, 0.25);
+  color: var(--blue-800);
+  text-align: center;
+}
+
+.sales-cta {
+  padding: 32px;
+}
+
+.sales-cta h2 {
+  margin-bottom: 8px;
+}
+
+.sales-cta p {
+  margin: 0;
+  color: rgba(248, 250, 252, 0.85);
 }
 
 @media (max-width: 1100px) {

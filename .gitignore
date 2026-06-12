@@ -1,0 +1,4 @@
+# local data of dev-server (db + uploaded photos)
+.data/
+node_modules/
+.DS_Store

@@ -9,6 +9,7 @@ const translations = {
     "nav.infrastructure": "Інфраструктура",
     "nav.advantages": "Переваги",
     "nav.vacancies": "Вакансії",
+    "nav.sales": "Продаж техніки",
     "nav.contactCta": "Зв’язатись",
     "nav.toggle": "Відкрити меню",
     "nav.title": "Меню",
@@ -172,6 +173,7 @@ const translations = {
     "footer.fleet": "Автопарк",
     "footer.advantages": "Переваги",
     "footer.vacancies": "Вакансії",
+    "footer.sales": "Продаж техніки",
     "footer.phoneLabel": "Телефон",
     "footer.addressLabel": "Адреса",
     "footer.addressValue": "р-н, вул. Східна, 4а, Ужгородський, Великі Лази, Закарпатська область, 88440",
@@ -229,7 +231,52 @@ const translations = {
     "vacancies.contactTitle": "Контакти для кандидатів",
     "vacancies.contactLead": "Телефонуйте для уточнення деталей.",
     "vacancies.contactPersonLabel": "Контактна особа",
-    "vacancies.backToHome": "Повернутися на головну"
+    "vacancies.backToHome": "Повернутися на головну",
+    "sales.hero.eyebrow": "Продаж техніки",
+    "sales.hero.title": "Продаж вантажної техніки",
+    "sales.hero.lead": "Вантажівки, тягачі та причепи з нашого автопарку. Перевірена техніка з відомою історією обслуговування.",
+    "sales.listEyebrow": "Каталог",
+    "sales.listTitle": "Техніка в продажу",
+    "sales.listLead": "Актуальні пропозиції. Телефонуйте, щоб уточнити стан, комплектацію та ціну.",
+    "sales.soon": "Скоро тут з’являться оголошення з фото, характеристиками та цінами.",
+    "sales.statusAvailable": "В наявності",
+    "sales.statusReserved": "Резерв",
+    "sales.statusSold": "Продано",
+    "sales.priceOnRequest": "Ціна за запитом",
+    "sales.inquire": "Дізнатись деталі",
+    "sales.ctaTitle": "Зацікавила техніка?",
+    "sales.ctaText": "Зателефонуйте — підкажемо наявність, ціну та умови.",
+    "sales.ctaButton": "Зв’язатись",
+    "booking.hero.eyebrow": "Тахосервіс",
+    "booking.hero.title": "Запис на тахосервіс онлайн",
+    "booking.hero.lead": "Оберіть вільну годину — і ми підтвердимо ваш запис. Встановлення, калібрування та ремонт тахографів.",
+    "booking.phoneLabel": "Або просто зателефонуйте:",
+    "booking.gridEyebrow": "Вільні години",
+    "booking.gridTitle": "Оберіть зручний час",
+    "booking.gridLead": "Працюємо Пн–Сб з 09:00 до 18:00. Одна година — один автомобіль.",
+    "booking.legendFree": "вільно",
+    "booking.legendPending": "очікує підтвердження",
+    "booking.legendBusy": "зайнято",
+    "booking.loading": "Завантаження вільних годин…",
+    "booking.unavailable": "Онлайн-запис тимчасово недоступний. Зателефонуйте нам, будь ласка.",
+    "booking.form.eyebrow": "Запис",
+    "booking.form.title": "Підтвердіть свій запис",
+    "booking.form.lead": "Оберіть годину вище, заповніть форму — і заявка одразу потрапить до нашого майстра.",
+    "booking.form.selected": "Обраний час:",
+    "booking.form.company": "Назва фірми / ім’я",
+    "booking.form.companyPlaceholder": "ТОВ «Транс»",
+    "booking.form.phone": "Телефон",
+    "booking.form.phonePlaceholder": "+380",
+    "booking.form.email": "Пошта (необов’язково)",
+    "booking.form.comment": "Коментар",
+    "booking.form.commentPlaceholder": "Марка авто, тип тахографа…",
+    "booking.form.submit": "Записатись",
+    "booking.form.noSlot": "Спочатку оберіть вільну годину в таблиці вище",
+    "booking.successTitle": "Заявку прийнято! ✅",
+    "booking.successText": "Ваш час зарезервовано та очікує підтвердження майстром. Ми зв’яжемося з вами найближчим часом.",
+    "serviceCenter.bookTacho": "Запис на тахосервіс онлайн",
+    "serviceWidget.title": "Найближчі вільні години на тахосервіс",
+    "serviceWidget.all": "Усі дати та запис →"
   },
   en: {
     "skip.link": "Skip to content",
@@ -241,6 +288,7 @@ const translations = {
     "nav.infrastructure": "Infrastructure",
     "nav.advantages": "Advantages",
     "nav.vacancies": "Careers",
+    "nav.sales": "Equipment Sales",
     "nav.contactCta": "Contact",
     "nav.toggle": "Open menu",
     "nav.title": "Menu",
@@ -404,6 +452,7 @@ const translations = {
     "footer.fleet": "Fleet",
     "footer.advantages": "Advantages",
     "footer.vacancies": "Vacancies",
+    "footer.sales": "Equipment Sales",
     "footer.phoneLabel": "Phone",
     "footer.addressLabel": "Address",
     "footer.addressValue": "4a Skhidna St., Velyki Lazy, Uzhhorod district, Zakarpattia region, 88440",
@@ -461,7 +510,52 @@ const translations = {
     "vacancies.contactTitle": "Contacts for candidates",
     "vacancies.contactLead": "Call us for details.",
     "vacancies.contactPersonLabel": "Contact person",
-    "vacancies.backToHome": "Back to home"
+    "vacancies.backToHome": "Back to home",
+    "sales.hero.eyebrow": "Equipment for sale",
+    "sales.hero.title": "Trucks & Equipment for Sale",
+    "sales.hero.lead": "Trucks, tractor units and trailers from our fleet. Inspected vehicles with a known service history.",
+    "sales.listEyebrow": "Catalogue",
+    "sales.listTitle": "Vehicles for sale",
+    "sales.listLead": "Current offers. Call us to check condition, specs and price.",
+    "sales.soon": "Listings with photos, specs and prices are coming soon.",
+    "sales.statusAvailable": "Available",
+    "sales.statusReserved": "Reserved",
+    "sales.statusSold": "Sold",
+    "sales.priceOnRequest": "Price on request",
+    "sales.inquire": "Request details",
+    "sales.ctaTitle": "Interested in a vehicle?",
+    "sales.ctaText": "Give us a call — we'll confirm availability, price and terms.",
+    "sales.ctaButton": "Contact us",
+    "booking.hero.eyebrow": "Tacho service",
+    "booking.hero.title": "Book tacho service online",
+    "booking.hero.lead": "Pick a free hour and we'll confirm your booking. Tachograph installation, calibration and repair.",
+    "booking.phoneLabel": "Or simply call us:",
+    "booking.gridEyebrow": "Available hours",
+    "booking.gridTitle": "Pick a convenient time",
+    "booking.gridLead": "Open Mon–Sat, 09:00–18:00. One hour — one vehicle.",
+    "booking.legendFree": "free",
+    "booking.legendPending": "awaiting confirmation",
+    "booking.legendBusy": "busy",
+    "booking.loading": "Loading available hours…",
+    "booking.unavailable": "Online booking is temporarily unavailable. Please call us.",
+    "booking.form.eyebrow": "Booking",
+    "booking.form.title": "Confirm your booking",
+    "booking.form.lead": "Pick an hour above, fill in the form — the request goes straight to our technician.",
+    "booking.form.selected": "Selected time:",
+    "booking.form.company": "Company / name",
+    "booking.form.companyPlaceholder": "Trans LLC",
+    "booking.form.phone": "Phone",
+    "booking.form.phonePlaceholder": "+380",
+    "booking.form.email": "Email (optional)",
+    "booking.form.comment": "Comment",
+    "booking.form.commentPlaceholder": "Vehicle make, tachograph type…",
+    "booking.form.submit": "Book now",
+    "booking.form.noSlot": "Please pick a free hour in the table above first",
+    "booking.successTitle": "Request received! ✅",
+    "booking.successText": "Your time slot is reserved and awaiting confirmation by our technician. We'll contact you shortly.",
+    "serviceCenter.bookTacho": "Book tacho service online",
+    "serviceWidget.title": "Upcoming free tacho-service hours",
+    "serviceWidget.all": "All dates & booking →"
   }
 };
 
@@ -640,6 +734,396 @@ const setYear = () => {
   });
 };
 
+// Equipment-sales page: render posts from the backend when it's available.
+// If the API is missing/unconfigured the static example cards stay as-is.
+const initSalesPage = () => {
+  const grid = document.getElementById("sales-grid");
+  if (!grid) {
+    return;
+  }
+
+  const STATUS_KEY = {
+    available: "sales.statusAvailable",
+    reserved: "sales.statusReserved",
+    sold: "sales.statusSold",
+  };
+
+  const openLightbox = (imgs, start) => {
+    let i = start;
+    const overlay = document.createElement("div");
+    overlay.className = "lightbox";
+    const img = document.createElement("img");
+    img.src = imgs[i];
+    overlay.appendChild(img);
+    if (imgs.length > 1) {
+      const mk = (cls, label, step) => {
+        const b = document.createElement("button");
+        b.className = "lightbox-nav " + cls;
+        b.type = "button";
+        b.textContent = label;
+        b.addEventListener("click", (e) => {
+          e.stopPropagation();
+          i = (i + step + imgs.length) % imgs.length;
+          img.src = imgs[i];
+        });
+        overlay.appendChild(b);
+      };
+      mk("prev", "‹", -1);
+      mk("next", "›", 1);
+    }
+    const close = () => {
+      overlay.remove();
+      document.removeEventListener("keydown", onKey);
+    };
+    const onKey = (e) => {
+      if (e.key === "Escape") close();
+    };
+    overlay.addEventListener("click", close);
+    document.addEventListener("keydown", onKey);
+    document.body.appendChild(overlay);
+  };
+
+  const saleCard = (p) => {
+    const card = document.createElement("article");
+    card.className = "card sale-card";
+    card.setAttribute("data-reveal", "");
+
+    const media = document.createElement("div");
+    media.className = "sale-media";
+    const img = document.createElement("img");
+    img.src = (p.images && p.images[0]) || "assets/images/yard-daf-line.jpg";
+    img.alt = p.title;
+    img.loading = "lazy";
+    media.appendChild(img);
+    if (p.images && p.images.length) {
+      img.style.cursor = "zoom-in";
+      img.addEventListener("click", () => openLightbox(p.images, 0));
+    }
+    const badge = document.createElement("span");
+    badge.className = "sale-badge sale-badge--" + p.status;
+    badge.setAttribute("data-i18n", STATUS_KEY[p.status] || STATUS_KEY.available);
+    media.appendChild(badge);
+
+    const body = document.createElement("div");
+    body.className = "sale-body";
+    const h3 = document.createElement("h3");
+    h3.textContent = p.title;
+    body.appendChild(h3);
+    if (p.specs) {
+      const specs = document.createElement("p");
+      specs.className = "sale-specs";
+      specs.textContent = p.specs;
+      body.appendChild(specs);
+    }
+    if (p.desc) {
+      const desc = document.createElement("p");
+      desc.className = "sale-desc";
+      desc.textContent = p.desc;
+      body.appendChild(desc);
+    }
+    const foot = document.createElement("div");
+    foot.className = "sale-footer";
+    const price = document.createElement("span");
+    price.className = "sale-price";
+    if (p.price) {
+      price.textContent = p.price;
+    } else {
+      price.setAttribute("data-i18n", "sales.priceOnRequest");
+    }
+    const btn = document.createElement("a");
+    btn.className = "btn btn-primary";
+    btn.href = "index.html#contacts";
+    btn.setAttribute("data-i18n", "sales.inquire");
+    foot.append(price, btn);
+    body.appendChild(foot);
+
+    card.append(media, body);
+    return card;
+  };
+
+  fetch("/api/sales")
+    .then((r) => {
+      if (!r.ok) throw new Error("api unavailable");
+      return r.json();
+    })
+    .then(({ posts }) => {
+      if (!Array.isArray(posts)) {
+        return;
+      }
+      const note = document.getElementById("sales-note");
+      grid.innerHTML = "";
+      if (!posts.length) {
+        if (note) note.hidden = false;
+        return;
+      }
+      if (note) note.hidden = true;
+      posts.forEach((p) => grid.appendChild(saleCard(p)));
+      grid.querySelectorAll("[data-reveal]").forEach((el) => el.classList.add("is-visible"));
+      setLanguage(localStorage.getItem("siteLang") || "uk");
+    })
+    .catch(() => {
+      /* backend missing — keep the static example cards */
+    });
+};
+
+// Mini calendar on the home page: next few days of tacho slots; a free slot
+// links to booking.html?date=...&hour=... where it gets pre-selected.
+const initTachoWidget = () => {
+  const widget = document.getElementById("tacho-widget");
+  const daysBox = document.getElementById("tacho-widget-days");
+  if (!widget || !daysBox) {
+    return;
+  }
+
+  const lang = () => localStorage.getItem("siteLang") || "uk";
+  let cache = null;
+
+  const render = () => {
+    if (!cache) {
+      return;
+    }
+    daysBox.innerHTML = "";
+    cache.days.slice(0, 3).forEach((day) => {
+      const row = document.createElement("div");
+      row.className = "slot-day" + (day.date === cache.today ? " is-today" : "");
+      const label = document.createElement("div");
+      label.className = "slot-day-label";
+      const d = new Date(day.date + "T00:00:00");
+      const dow = document.createElement("span");
+      dow.className = "slot-dow";
+      dow.textContent =
+        day.date === cache.today
+          ? lang() === "uk" ? "сьогодні" : "today"
+          : new Intl.DateTimeFormat(lang() === "uk" ? "uk-UA" : "en-GB", { weekday: "short" }).format(d);
+      const dt = document.createElement("span");
+      dt.className = "slot-date";
+      dt.textContent = String(d.getDate()).padStart(2, "0") + "." + String(d.getMonth() + 1).padStart(2, "0");
+      label.append(dow, dt);
+      const slots = document.createElement("div");
+      slots.className = "slot-list";
+      day.slots.forEach((s) => {
+        const time = String(s.hour).padStart(2, "0") + ":00";
+        if (s.status === "free") {
+          const a = document.createElement("a");
+          a.className = "slot is-free";
+          a.textContent = time;
+          a.href = "booking.html?date=" + day.date + "&hour=" + s.hour;
+          slots.appendChild(a);
+        } else {
+          const b = document.createElement("button");
+          b.type = "button";
+          b.className = "slot is-" + s.status;
+          b.textContent = time;
+          b.disabled = true;
+          slots.appendChild(b);
+        }
+      });
+      row.append(label, slots);
+      daysBox.appendChild(row);
+    });
+  };
+
+  fetch("/api/bookings")
+    .then((r) => {
+      if (!r.ok) throw new Error("api");
+      return r.json();
+    })
+    .then((data) => {
+      if (!Array.isArray(data.days) || !data.days.length) {
+        return;
+      }
+      cache = { days: data.days, today: data.today || null };
+      render();
+      widget.hidden = false;
+    })
+    .catch(() => {
+      /* backend missing — widget stays hidden */
+    });
+
+  document.querySelectorAll("[data-lang]").forEach((btn) => {
+    btn.addEventListener("click", render);
+  });
+};
+
+// Tacho-service booking page: slot grid + request form.
+const initBookingPage = () => {
+  const grid = document.getElementById("slot-grid");
+  const form = document.getElementById("booking-form");
+  if (!grid || !form) {
+    return;
+  }
+
+  let selected = null; // {date, hour}
+  let daysCache = [];
+  let todayIsoCache = null; // Kyiv "today" from the API (browser tz may differ)
+  let preselectDone = false; // ?date=&hour= from the home-page widget, applied once
+
+  const lang = () => localStorage.getItem("siteLang") || "uk";
+  const t = (key) => (translations[lang()] || {})[key] || key;
+
+  const fmtDay = (iso) => {
+    const d = new Date(iso + "T00:00:00");
+    const wd = new Intl.DateTimeFormat(lang() === "uk" ? "uk-UA" : "en-GB", { weekday: "short" }).format(d);
+    return wd + " " + String(d.getDate()).padStart(2, "0") + "." + String(d.getMonth() + 1).padStart(2, "0");
+  };
+
+  const updateSelected = () => {
+    const box = document.getElementById("booking-selected");
+    const text = document.getElementById("booking-selected-text");
+    if (!box || !text) return;
+    if (selected) {
+      box.hidden = false;
+      text.textContent = fmtDay(selected.date) + ", " + String(selected.hour).padStart(2, "0") + ":00";
+    } else {
+      box.hidden = true;
+    }
+  };
+
+  const renderGrid = () => {
+    grid.innerHTML = "";
+    const n = new Date();
+    const todayIso =
+      todayIsoCache ||
+      n.getFullYear() + "-" + String(n.getMonth() + 1).padStart(2, "0") + "-" + String(n.getDate()).padStart(2, "0");
+    daysCache.forEach((day) => {
+      const row = document.createElement("div");
+      row.className = "slot-day" + (day.date === todayIso ? " is-today" : "");
+      const label = document.createElement("div");
+      label.className = "slot-day-label";
+      const d = new Date(day.date + "T00:00:00");
+      const dow = document.createElement("span");
+      dow.className = "slot-dow";
+      dow.textContent =
+        day.date === todayIso
+          ? lang() === "uk" ? "сьогодні" : "today"
+          : new Intl.DateTimeFormat(lang() === "uk" ? "uk-UA" : "en-GB", { weekday: "short" }).format(d);
+      const dt = document.createElement("span");
+      dt.className = "slot-date";
+      dt.textContent = String(d.getDate()).padStart(2, "0") + "." + String(d.getMonth() + 1).padStart(2, "0");
+      label.append(dow, dt);
+      const slots = document.createElement("div");
+      slots.className = "slot-list";
+      day.slots.forEach((s) => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "slot is-" + s.status;
+        b.textContent = String(s.hour).padStart(2, "0") + ":00";
+        if (s.status === "free") {
+          if (selected && selected.date === day.date && selected.hour === s.hour) {
+            b.classList.add("is-selected");
+          }
+          b.addEventListener("click", () => {
+            selected = { date: day.date, hour: s.hour };
+            renderGrid();
+            updateSelected();
+            const target = document.getElementById("booking-form-section");
+            if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        } else {
+          b.disabled = true;
+        }
+        slots.appendChild(b);
+      });
+      row.append(label, slots);
+      grid.appendChild(row);
+    });
+  };
+
+  const loadGrid = () =>
+    fetch("/api/bookings")
+      .then((r) => {
+        if (!r.ok) throw new Error("api");
+        return r.json();
+      })
+      .then((data) => {
+        daysCache = data.days || [];
+        todayIsoCache = data.today || null;
+        if (!preselectDone) {
+          preselectDone = true;
+          const params = new URLSearchParams(window.location.search);
+          const qDate = params.get("date");
+          const qHour = parseInt(params.get("hour"), 10);
+          if (qDate && !Number.isNaN(qHour)) {
+            const day = daysCache.find((d) => d.date === qDate);
+            const slot = day && day.slots.find((s) => s.hour === qHour);
+            if (slot && slot.status === "free") {
+              selected = { date: qDate, hour: qHour };
+              setTimeout(() => {
+                const target = document.getElementById("booking-form-section");
+                if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+              }, 350);
+            }
+          }
+        }
+        if (selected) {
+          const day = daysCache.find((d) => d.date === selected.date);
+          const slot = day && day.slots.find((s) => s.hour === selected.hour);
+          if (!slot || slot.status !== "free") selected = null;
+        }
+        renderGrid();
+        updateSelected();
+      })
+      .catch(() => {
+        grid.innerHTML = "";
+        const p = document.createElement("p");
+        p.className = "booking-error";
+        p.textContent = t("booking.unavailable");
+        grid.appendChild(p);
+      });
+
+  // re-render day labels when the site language changes
+  document.querySelectorAll("[data-lang]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      renderGrid();
+      updateSelected();
+    });
+  });
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const err = document.getElementById("booking-error");
+    const success = document.getElementById("booking-success");
+    err.textContent = "";
+    if (!selected) {
+      err.textContent = t("booking.form.noSlot");
+      return;
+    }
+    const submitBtn = form.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    fetch("/api/bookings", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        date: selected.date,
+        hour: selected.hour,
+        company: form.company.value,
+        phone: form.phone.value,
+        email: form.email.value,
+        comment: form.comment.value,
+        website: form.website.value, // honeypot
+      }),
+    })
+      .then((r) => r.json().then((data) => ({ ok: r.ok, data })))
+      .then(({ ok, data }) => {
+        if (!ok) throw new Error(data.error || "error");
+        selected = null;
+        form.reset();
+        if (success) success.hidden = false;
+        updateSelected();
+        loadGrid();
+      })
+      .catch((e) => {
+        err.textContent = e.message;
+        loadGrid();
+      })
+      .finally(() => {
+        submitBtn.disabled = false;
+      });
+  });
+
+  loadGrid();
+};
+
 const initHeaderScroll = () => {
   const header = document.querySelector(".site-header");
   if (!header) {
@@ -656,4 +1140,7 @@ initLanguage();
 initNavToggle();
 initReveal();
 initHeaderScroll();
+initSalesPage();
+initBookingPage();
+initTachoWidget();
 setYear();

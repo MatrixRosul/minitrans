@@ -65,6 +65,7 @@
             <a href="#infrastructure" data-i18n="nav.infrastructure">Інфраструктура</a>
             <a href="#advantages" data-i18n="nav.advantages">Переваги</a>
             <a href="vacancies.html" data-i18n="nav.vacancies">Вакансії</a>
+            <a href="sales.html" data-i18n="nav.sales">Продаж техніки</a>
             <a class="nav-cta" href="#contacts" data-i18n="nav.contactCta">Зв’язатись</a>
           </div>
         </div>
@@ -249,11 +250,21 @@
           </ul>
           <div class="service-note" data-i18n="serviceCenter.note">Тахо сервіс Ужгород і сервіс TIR Ужгород — працюємо з технікою будь-якої складності.</div>
           <div class="service-actions">
-            <a class="btn btn-primary" href="#contacts" data-i18n="serviceCenter.cta">Записатись на сервіс</a>
+            <a class="btn btn-primary" href="booking.html" data-i18n="serviceCenter.bookTacho">Запис на тахосервіс онлайн</a>
+            <a class="btn btn-ghost" style="border-color: rgba(27,95,209,.4); color: var(--blue-700);" href="#contacts" data-i18n="serviceCenter.cta">Записатись на сервіс</a>
           </div>
         </div>
         <div class="split-media" data-reveal>
           <img src="assets/images/garage-daf.jpg" alt="Сервісний центр вантажного транспорту в Ужгороді" loading="lazy" data-i18n-alt="serviceCenter.alt" />
+        </div>
+      </div>
+      <div class="container tacho-widget" id="tacho-widget" hidden>
+        <div class="slot-grid slot-grid--compact">
+          <div class="tacho-widget-head">
+            <h3 data-i18n="serviceWidget.title">Найближчі вільні години на тахосервіс</h3>
+            <a class="tacho-widget-all" href="booking.html" data-i18n="serviceWidget.all">Усі дати та запис →</a>
+          </div>
+          <div id="tacho-widget-days"></div>
         </div>
       </div>
     </section>
@@ -544,6 +555,7 @@
         <a href="#fleet" data-i18n="footer.fleet">Автопарк</a>
         <a href="#advantages" data-i18n="footer.advantages">Переваги</a>
         <a href="vacancies.html" data-i18n="footer.vacancies">Вакансії</a>
+        <a href="sales.html" data-i18n="footer.sales">Продаж техніки</a>
       </div>
       <div class="footer-contact">
         <span class="footer-label" data-i18n="footer.phoneLabel">Телефон</span>

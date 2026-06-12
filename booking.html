@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Політика конфіденційності — МПП Мінітранс</title>
-  <meta name="description" content="Політика конфіденційності МПП Мінітранс щодо обробки персональних даних." />
+  <title>Запис на тахосервіс — МПП Мінітранс</title>
+  <meta name="description" content="Онлайн-запис на тахосервіс МПП Мінітранс в Ужгороді: оберіть вільну годину. Встановлення, калібрування та ремонт тахографів." />
   <link rel="icon" type="image/png" href="assets/images/favicon.png" />
   <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico" />
   <link rel="apple-touch-icon" href="assets/images/apple-touch-icon.png" />
@@ -61,19 +61,72 @@
   <main id="main">
     <section class="page-hero">
       <div class="container">
-        <p class="eyebrow" data-i18n="legal.eyebrow">Документи</p>
-        <h1 data-i18n="privacy.title">Політика конфіденційності</h1>
-        <p class="lead" data-i18n="privacy.lead">Ми поважаємо вашу приватність та захищаємо персональні дані.</p>
+        <p class="eyebrow" data-i18n="booking.hero.eyebrow">Тахосервіс</p>
+        <h1 data-i18n="booking.hero.title">Запис на тахосервіс онлайн</h1>
+        <p class="lead" data-i18n="booking.hero.lead">Оберіть вільну годину — і ми підтвердимо ваш запис. Встановлення, калібрування та ремонт тахографів.</p>
+        <div class="booking-phone">
+          <span data-i18n="booking.phoneLabel">Або просто зателефонуйте:</span>
+          <a class="btn btn-ghost" href="tel:+380955783514">+38 (095) 578 35 14 — <span data-i18n="contacts.name.oleksandr">Олександр</span></a>
+        </div>
       </div>
     </section>
 
     <section class="section">
-      <div class="container legal-content">
-        <div class="card">
-          <p data-i18n="privacy.body1">Збираємо лише дані, які ви залишаєте у формах: ім’я, телефон та повідомлення.</p>
-          <p data-i18n="privacy.body2">Інформація використовується виключно для зв’язку та надання послуг і не передається третім сторонам без згоди.</p>
-          <p data-i18n="privacy.body3">Ви можете запросити оновлення або видалення даних, звернувшись за телефоном.</p>
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow" data-i18n="booking.gridEyebrow">Вільні години</p>
+          <h2 data-i18n="booking.gridTitle">Оберіть зручний час</h2>
+          <p class="section-lead" data-i18n="booking.gridLead">Працюємо Пн–Сб з 09:00 до 18:00. Одна година — один автомобіль.</p>
         </div>
+
+        <div class="slot-legend">
+          <span class="legend-item"><span class="legend-dot dot-free"></span><span data-i18n="booking.legendFree">вільно</span></span>
+          <span class="legend-item"><span class="legend-dot dot-pending"></span><span data-i18n="booking.legendPending">очікує підтвердження</span></span>
+          <span class="legend-item"><span class="legend-dot dot-busy"></span><span data-i18n="booking.legendBusy">зайнято</span></span>
+        </div>
+
+        <div id="slot-grid" class="slot-grid">
+          <p class="muted" data-i18n="booking.loading">Завантаження вільних годин…</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-soft" id="booking-form-section">
+      <div class="container apply-grid">
+        <div data-reveal>
+          <p class="eyebrow" data-i18n="booking.form.eyebrow">Запис</p>
+          <h2 data-i18n="booking.form.title">Підтвердіть свій запис</h2>
+          <p data-i18n="booking.form.lead">Оберіть годину вище, заповніть форму — і заявка одразу потрапить до нашого майстра.</p>
+          <div class="booking-selected card" id="booking-selected" hidden>
+            <span data-i18n="booking.form.selected">Обраний час:</span>
+            <strong id="booking-selected-text"></strong>
+          </div>
+        </div>
+        <form class="card form-card" id="booking-form" data-reveal>
+          <input type="text" name="website" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true" />
+          <label>
+            <span data-i18n="booking.form.company">Назва фірми / ім’я</span>
+            <input type="text" name="company" required placeholder="ТОВ «Транс»" data-i18n-placeholder="booking.form.companyPlaceholder" />
+          </label>
+          <label>
+            <span data-i18n="booking.form.phone">Телефон</span>
+            <input type="tel" name="phone" required placeholder="+380" data-i18n-placeholder="booking.form.phonePlaceholder" />
+          </label>
+          <label>
+            <span data-i18n="booking.form.email">Пошта (необов’язково)</span>
+            <input type="email" name="email" placeholder="you@email.com" />
+          </label>
+          <label>
+            <span data-i18n="booking.form.comment">Коментар</span>
+            <textarea name="comment" rows="3" placeholder="Марка авто, тип тахографа…" data-i18n-placeholder="booking.form.commentPlaceholder"></textarea>
+          </label>
+          <div class="booking-error" id="booking-error"></div>
+          <button class="btn btn-primary" type="submit" data-i18n="booking.form.submit">Записатись</button>
+          <div class="booking-success" id="booking-success" hidden>
+            <strong data-i18n="booking.successTitle">Заявку прийнято! ✅</strong>
+            <p data-i18n="booking.successText">Ваш час зарезервовано та очікує підтвердження майстром. Ми зв’яжемося з вами найближчим часом.</p>
+          </div>
+        </form>
       </div>
     </section>
   </main>
