@@ -95,7 +95,10 @@ class handler(BaseHTTPRequestHandler):
     @_guard
     def do_POST(self):
         body = util.read_json(self)
-        if body.get("website"):  # honeypot field — bots fill it, humans never see it
+        # admin creates a booking directly from the calendar (phone call):
+        # confirmed immediately, no anti-abuse caps, no company notification
+        is_admin_direct = bool(body.get("direct")) and util.is_authed(self)
+        if not is_admin_direct and body.get("website"):  # honeypot — bots fill it
             util.send_json(self, 200, {"ok": True})
             return
         company = str(body.get("company") or "").strip()[:200]
@@ -128,13 +131,13 @@ class handler(BaseHTTPRequestHandler):
 
         # anti-abuse: cap active bookings per contact and total open requests
         today_iso = now.date().isoformat()
-        if db.count_active_for_contact(phone, email, today_iso) >= 3:
+        if not is_admin_direct and db.count_active_for_contact(phone, email, today_iso) >= 3:
             util.send_json(
                 self, 429,
                 {"error": "З цими контактами вже є кілька активних записів. Зателефонуйте нам, будь ласка."},
             )
             return
-        if db.count_pending(today_iso) >= 40:
+        if not is_admin_direct and db.count_pending(today_iso) >= 40:
             util.send_json(
                 self, 429,
                 {"error": "Онлайн-запис тимчасово перевантажений. Зателефонуйте нам, будь ласка."},
@@ -150,11 +153,17 @@ class handler(BaseHTTPRequestHandler):
             "email": email,
             "comment": comment,
         }
-        if not db.insert_booking(booking):
+        status = "confirmed" if is_admin_direct else "pending"
+        if not db.insert_booking(booking, status=status):
             util.send_json(self, 409, {"error": "Цю годину щойно зайняли. Оберіть іншу."})
             return
-        b = dict(booking, day=date_s, status="pending")
+        b = dict(booking, day=date_s, status=status)
         cancel_url = cancel_url_for(self, booking["id"])
+        if is_admin_direct:
+            # booked by the admin over the phone — just confirm to the client
+            sent = mail.booking_confirmed(b, cancel_url) if email else False
+            util.send_json(self, 200, {"ok": True, "date": date_s, "hour": hour, "emailSent": sent})
+            return
         mail.booking_received(b, cancel_url)
         mail.notify_company(b, "new")
         util.send_json(self, 200, {"ok": True, "date": date_s, "hour": hour})

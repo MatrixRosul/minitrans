@@ -137,7 +137,8 @@
           <h2 data-i18n="vacancies.applyTitle">Залишити заявку на вакансію</h2>
           <p data-i18n="vacancies.applyLead">Заповніть форму і ми зв’яжемося з вами.</p>
         </div>
-        <form class="card form-card" data-reveal>
+        <form class="card form-card" id="apply-form" data-reveal>
+          <input type="text" name="website" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true" />
           <label>
             <span data-i18n="vacancies.form.nameLabel">Ім’я та прізвище</span>
             <input type="text" name="name" placeholder="Ваше ім’я" required data-i18n-placeholder="vacancies.form.namePlaceholder" />
@@ -145,6 +146,10 @@
           <label>
             <span data-i18n="vacancies.form.phoneLabel">Телефон</span>
             <input type="tel" name="phone" placeholder="+380" required data-i18n-placeholder="vacancies.form.phonePlaceholder" />
+          </label>
+          <label>
+            <span data-i18n="vacancies.form.emailLabel">Пошта</span>
+            <input type="email" name="email" placeholder="you@email.com" />
           </label>
           <label>
             <span data-i18n="vacancies.form.positionLabel">Бажана позиція</span>
@@ -159,10 +164,19 @@
             </select>
           </label>
           <label>
-            <span data-i18n="vacancies.form.messageLabel">Коментар</span>
-            <textarea name="message" rows="4" placeholder="Коротко розкажіть про досвід" data-i18n-placeholder="vacancies.form.messagePlaceholder"></textarea>
+            <span data-i18n="vacancies.form.messageLabel">Досвід роботи та про себе</span>
+            <textarea name="message" rows="4" required placeholder="Розкажіть про досвід роботи та про себе" data-i18n-placeholder="vacancies.form.messagePlaceholder"></textarea>
           </label>
+          <label>
+            <span data-i18n="vacancies.form.filesLabel">Файли — резюме/CV (до 3: PDF, DOC, фото)</span>
+            <input type="file" name="files" multiple accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" />
+          </label>
+          <div class="booking-error" id="apply-error"></div>
           <button class="btn btn-primary" type="submit" data-i18n="vacancies.form.submit">Надіслати заявку</button>
+          <div class="booking-success" id="apply-success" hidden>
+            <strong data-i18n="vacancies.form.successTitle">Заявку надіслано! ✅</strong>
+            <p data-i18n="vacancies.form.successText">Дякуємо! Ми переглянемо вашу заявку та зв’яжемося з вами.</p>
+          </div>
         </form>
       </div>
     </section>
@@ -201,5 +215,91 @@
   </footer>
 
   <script src="script.js"></script>
+  <script>
+    (function () {
+      var form = document.getElementById('apply-form');
+      if (!form) return;
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        var errorEl = document.getElementById('apply-error');
+        var successEl = document.getElementById('apply-success');
+        var submitBtn = form.querySelector('[type="submit"]');
+
+        errorEl.textContent = '';
+        successEl.hidden = true;
+        submitBtn.disabled = true;
+
+        var fileInput = form.querySelector('input[name="files"]');
+        var fileList = fileInput ? Array.prototype.slice.call(fileInput.files) : [];
+
+        if (fileList.length > 3) {
+          errorEl.textContent = 'Максимум 3 файли';
+          submitBtn.disabled = false;
+          return;
+        }
+
+        for (var i = 0; i < fileList.length; i++) {
+          if (fileList[i].size > 3 * 1024 * 1024) {
+            errorEl.textContent = 'Файл «' + fileList[i].name + '» завеликий (макс 3МБ)';
+            submitBtn.disabled = false;
+            return;
+          }
+        }
+
+        var positionSelect = form.querySelector('select[name="position"]');
+        var positionText = positionSelect
+          ? positionSelect.options[positionSelect.selectedIndex].text
+          : '';
+
+        function readFile(file) {
+          return new Promise(function (resolve, reject) {
+            var reader = new FileReader();
+            reader.onload = function (ev) {
+              var dataUrl = ev.target.result;
+              var base64 = dataUrl.slice(dataUrl.indexOf(',') + 1);
+              resolve({ name: file.name, type: file.type || 'application/pdf', data: base64 });
+            };
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+          });
+        }
+
+        Promise.all(fileList.map(readFile)).then(function (filesPayload) {
+          var payload = {
+            name: form.name.value,
+            phone: form.phone.value,
+            email: form.email.value,
+            position: positionText,
+            comment: form.message.value,
+            website: form.website.value,
+            files: filesPayload
+          };
+
+          return fetch('/api/applications', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+        }).then(function (response) {
+          if (response.ok) {
+            form.reset();
+            successEl.hidden = false;
+          } else {
+            return response.json().then(function (data) {
+              errorEl.textContent = (data && data.error) || 'Не вдалося надіслати. Спробуйте ще раз.';
+            }).catch(function () {
+              errorEl.textContent = 'Не вдалося надіслати. Спробуйте ще раз.';
+            });
+          }
+        }).catch(function () {
+          errorEl.textContent = 'Не вдалося надіслати. Спробуйте ще раз.';
+        }).then(function () {
+          submitBtn.disabled = false;
+        });
+      });
+    })();
+  </script>
 </body>
 </html>

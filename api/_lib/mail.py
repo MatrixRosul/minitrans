@@ -170,8 +170,9 @@ def booking_received(b, cancel_url):
         "Вітаємо!\n\n"
         "Ми отримали вашу заявку на тахосервіс на %s.\n"
         "Час зарезервовано та очікує підтвердження майстром — ми надішлемо лист, щойно запис буде підтверджено.\n\n"
-        "Адреса: %s\nКарта: %s\nТелефон: %s\n\n"
-        "Скасувати запис: %s\n" % (when, ADDRESS, MAPS_URL, TACHO_PHONE, cancel_url)
+        "Якщо хочете скасувати чи перенести запис — зателефонуйте: %s.\n"
+        "Або скасуйте онлайн: %s\n\n"
+        "Адреса: %s\nКарта: %s\n" % (when, TACHO_PHONE, cancel_url, ADDRESS, MAPS_URL)
     )
     html = _wrap_html(
         "Заявку отримано ✅",
@@ -179,7 +180,8 @@ def booking_received(b, cancel_url):
             "Вітаємо!",
             "Ми отримали вашу заявку на тахосервіс на <strong>%s</strong>." % when,
             "Час зарезервовано та очікує підтвердження майстром — ми надішлемо лист, щойно запис буде підтверджено.",
-            'Якщо плани змінилися — <a href="%s" style="color:#1b5fd1">скасуйте запис</a>.' % cancel_url,
+            'Якщо хочете скасувати чи перенести запис — зателефонуйте: <a href="tel:+380730010770" style="color:#1b5fd1"><strong>%s</strong></a>.' % TACHO_PHONE,
+            'Або <a href="%s" style="color:#1b5fd1">скасуйте онлайн</a>.' % cancel_url,
         ],
     )
     return send(b.get("email"), subject, text, html)
@@ -192,16 +194,17 @@ def booking_confirmed(b, cancel_url):
     text = (
         "Ваш запис підтверджено!\n\n"
         "Ви записані на тахосервіс на %s за адресою %s.\n"
-        "Карта: %s\nТелефон: %s\n\n"
-        "Скасувати запис: %s\n" % (when, ADDRESS, MAPS_URL, TACHO_PHONE, cancel_url)
+        "Карта: %s\n\n"
+        "Якщо хочете скасувати чи перенести запис — зателефонуйте: %s.\n"
+        "Або скасуйте онлайн: %s\n" % (when, ADDRESS, MAPS_URL, TACHO_PHONE, cancel_url)
     )
     html = _wrap_html(
         "Запис підтверджено 🎉",
         [
             "Ви записані на тахосервіс на <strong>%s</strong>" % when,
             "за адресою <strong>%s</strong>." % ADDRESS,
-            "Якщо плани зміняться — <a href=\"%s\" style=\"color:#1b5fd1\">скасуйте запис</a> або зателефонуйте."
-            % cancel_url,
+            'Якщо хочете скасувати чи перенести запис — зателефонуйте: <a href="tel:+380730010770" style="color:#1b5fd1"><strong>%s</strong></a>.' % TACHO_PHONE,
+            'Або <a href="%s" style="color:#1b5fd1">скасуйте онлайн</a>.' % cancel_url,
         ],
         button=("📍 Показати на карті", MAPS_URL),
     )
@@ -231,6 +234,60 @@ def booking_cancelled(b, by_client, reason=""):
     )
     html = _wrap_html("Запис скасовано", lines)
     return send(b.get("email"), subject, text, html)
+
+
+# ---------- job application emails ----------
+
+def application_received(a):
+    """To the candidate right after they apply."""
+    subject = "Заявку на вакансію отримано — %s" % SITE_NAME
+    pos = ' на вакансію «%s»' % a["position"] if a.get("position") else ""
+    text = (
+        "Вітаємо!\n\n"
+        "Ми отримали вашу заявку%s. Дякуємо за інтерес до МПП Мінітранс!\n"
+        "Ми переглянемо заявку та зв'яжемося з вами найближчим часом.\n\n"
+        "Телефон: %s\n" % (pos, TACHO_PHONE)
+    )
+    import html as _html
+
+    html = _wrap_html(
+        "Заявку отримано ✅",
+        [
+            "Вітаємо!",
+            "Ми отримали вашу заявку%s." % (" на вакансію «<strong>%s</strong>»" % _html.escape(a["position"]) if a.get("position") else ""),
+            "Дякуємо за інтерес до МПП Мінітранс! Ми переглянемо заявку та зв'яжемося з вами найближчим часом.",
+        ],
+    )
+    return send(a.get("email"), subject, text, html)
+
+
+def notify_company_application(a, files_meta):
+    """To the company mailbox about a new job application."""
+    import html as _html
+
+    safe = {k: _html.escape(str(a.get(k) or "")) for k in ("name", "position", "phone", "email", "comment")}
+    subject = "🧑‍🔧 Нова заявка на вакансію: %s — %s" % (a.get("position") or "—", a["name"])
+    files_line = ", ".join(f["name"] for f in files_meta) if files_meta else "немає"
+    text = (
+        "Нова заявка на вакансію\n\n"
+        "Ім'я: %s\nВакансія: %s\nТелефон: %s\nПошта: %s\n"
+        "Про себе: %s\nФайли: %s\n\n"
+        "Переглянути в адмінці: https://minitrans.uz.ua/admin\n"
+        % (a["name"], a.get("position") or "—", a["phone"], a.get("email") or "—", a.get("comment") or "—", files_line)
+    )
+    lines = [
+        "<strong>Ім'я:</strong> %s" % safe["name"],
+        "<strong>Вакансія:</strong> %s" % (safe["position"] or "—"),
+        "<strong>Телефон:</strong> %s" % safe["phone"],
+    ]
+    if safe["email"]:
+        lines.append("<strong>Пошта:</strong> %s" % safe["email"])
+    if safe["comment"]:
+        lines.append("<strong>Про себе:</strong> %s" % safe["comment"])
+    lines.append("<strong>Файли:</strong> %s" % _html.escape(files_line))
+    lines.append('Переглянути та завантажити файли — в <a href="https://minitrans.uz.ua/admin" style="color:#1b5fd1">адмінці</a>.')
+    html = _wrap_html("Нова заявка на вакансію", lines)
+    return send(NOTIFY_EMAIL, subject, text, html)
 
 
 def notify_company(b, event):

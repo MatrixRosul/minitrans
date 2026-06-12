@@ -104,6 +104,7 @@
     .cal-cell.pending:hover { background: #fde68a; }
     .cal-cell.confirmed { background: #dcfce7; border-color: #86efac; color: #14532d; cursor: pointer; }
     .cal-cell.confirmed:hover { background: #bbf7d0; }
+    .cal-cell.free:hover { border-color: var(--blue-600); background: rgba(27,95,209,.06); }
     /* ---------- booking modal ---------- */
     #bk-overlay { position: fixed; inset: 0; background: rgba(10,27,51,.5); display: none; align-items: flex-start; justify-content: center; overflow-y: auto; padding: 4vh 12px; z-index: 50; }
     #bk-overlay.open { display: flex; }
@@ -113,6 +114,15 @@
     .bk-field .bk-label { font-weight: 700; color: var(--gray-500); font-size: 0.78rem; }
     .bk-field .bk-val { color: var(--gray-700); word-break: break-word; }
     .bk-foot { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; margin-top: 18px; }
+    /* ---------- new booking modal ---------- */
+    #nb-overlay { position: fixed; inset: 0; background: rgba(10,27,51,.5); display: none; align-items: flex-start; justify-content: center; overflow-y: auto; padding: 4vh 12px; z-index: 50; }
+    #nb-overlay.open { display: flex; }
+    #nb-modal { width: min(440px, 100%); margin-bottom: 6vh; }
+    #nb-modal h3 { margin-bottom: 16px; }
+    #nb-modal label { display: grid; gap: 5px; font-weight: 600; font-size: 0.88rem; margin-bottom: 12px; }
+    #nb-modal input, #nb-modal textarea { width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--gray-300); font: inherit; background: var(--white); }
+    #nb-modal textarea { resize: vertical; }
+    #nb-modal .hint { font-size: 0.78rem; color: var(--gray-500); margin: -6px 0 12px; }
   </style>
 </head>
 <body>
@@ -138,6 +148,7 @@
       <div class="tabs">
         <button class="tab active" data-tab="service">Запис на тахосервіс <span id="pending-count" class="badge reserved" hidden></span></button>
         <button class="tab" data-tab="sales">Продаж техніки</button>
+        <button class="tab" data-tab="vacancies">Вакансії <span id="apps-count" class="badge reserved" hidden></span></button>
       </div>
 
       <div id="tab-sales" hidden>
@@ -166,6 +177,14 @@
         </div>
 
         <div class="list card" id="bookings"><div class="empty">Завантаження…</div></div>
+      </div>
+
+      <div id="tab-vacancies" hidden>
+        <div class="topbar">
+          <h2 style="margin:0">Заявки на вакансії</h2>
+          <button class="btn btn-ghost" id="reload-apps">Оновити</button>
+        </div>
+        <div class="list card" id="apps"><div class="empty">Завантаження…</div></div>
       </div>
     </div>
 
@@ -225,6 +244,31 @@
       </div>
     </div>
 
+    <!-- New booking modal (admin manual entry) -->
+    <div id="nb-overlay">
+      <div id="nb-modal" class="card">
+        <h3 id="nb-title">Новий запис</h3>
+        <label>Фірма / ім'я *
+          <input id="nb-company" type="text" placeholder="ТОВ Перевізник або Іван Петренко" />
+        </label>
+        <label>Телефон *
+          <input id="nb-phone" type="tel" placeholder="+380501234567" />
+        </label>
+        <label>Пошта
+          <input id="nb-email" type="email" placeholder="email@example.com" />
+        </label>
+        <p class="hint">Клієнт отримає лист-підтвердження, якщо вказана пошта</p>
+        <label>Коментар
+          <textarea id="nb-comment" rows="3" placeholder="Додаткова інформація…"></textarea>
+        </label>
+        <div class="err" id="nb-err"></div>
+        <div class="bk-foot">
+          <button class="btn btn-primary" id="nb-submit">Записати</button>
+          <button class="btn btn-ghost" id="nb-cancel">Скасувати</button>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <script>
@@ -236,13 +280,24 @@
       return data;
     };
 
+    // apiLoad: GET with one retry after 2500ms on failure (cold-start resilience)
+    const apiLoad = async (url, listBox) => {
+      try {
+        return await api(url);
+      } catch (_) {
+        if (listBox) listBox.innerHTML = '<div class="empty">База прокидається, зачекайте…</div>';
+        await new Promise((res) => setTimeout(res, 2500));
+        return await api(url);
+      }
+    };
+
     const STATUS_UA = { available: "В наявності", reserved: "Резерв", sold: "Продано" };
 
     // ---------- auth ----------
     const showApp = (authed) => {
       $("#login").hidden = authed;
       $("#app").hidden = !authed;
-      if (authed) { loadHealth(); loadPosts(); loadBookings(); }
+      if (authed) { loadHealth(); loadPosts(); loadBookings(); loadApps(); }
     };
 
     // ---------- tabs ----------
@@ -251,7 +306,9 @@
         document.querySelectorAll(".tab").forEach((x) => x.classList.toggle("active", x === tab));
         $("#tab-sales").hidden = tab.dataset.tab !== "sales";
         $("#tab-service").hidden = tab.dataset.tab !== "service";
+        $("#tab-vacancies").hidden = tab.dataset.tab !== "vacancies";
         if (tab.dataset.tab === "service") loadBookings();
+        if (tab.dataset.tab === "vacancies") loadApps();
       });
     });
 
@@ -289,7 +346,7 @@
     const loadPosts = async () => {
       const box = $("#posts");
       try {
-        ({ posts } = await api("/api/sales"));
+        ({ posts } = await apiLoad("/api/sales", box));
         if (!posts.length) {
           box.innerHTML = '<div class="empty">Поки немає оголошень. Натисніть «+ Додати оголошення».</div>';
           return;
@@ -445,6 +502,56 @@
       loadBookings();
     });
 
+    // ---------- new booking modal (manual entry) ----------
+    let nbDate = null;
+    let nbHour = null;
+
+    const closeNbModal = () => {
+      $("#nb-overlay").classList.remove("open");
+      nbDate = null;
+      nbHour = null;
+    };
+
+    const openNbModal = (date, hour) => {
+      nbDate = date;
+      nbHour = hour;
+      $("#nb-title").textContent = "Новий запис — " + fmtDay(date) + ", " + String(hour).padStart(2, "0") + ":00";
+      $("#nb-company").value = "";
+      $("#nb-phone").value = "";
+      $("#nb-email").value = "";
+      $("#nb-comment").value = "";
+      $("#nb-err").textContent = "";
+      $("#nb-submit").disabled = false;
+      $("#nb-overlay").classList.add("open");
+    };
+
+    $("#nb-overlay").addEventListener("click", (e) => { if (e.target.id === "nb-overlay") closeNbModal(); });
+    $("#nb-cancel").addEventListener("click", closeNbModal);
+
+    $("#nb-submit").addEventListener("click", async () => {
+      const company = $("#nb-company").value.trim();
+      const phone = $("#nb-phone").value.trim();
+      const email = $("#nb-email").value.trim();
+      const comment = $("#nb-comment").value.trim();
+      const errEl = $("#nb-err");
+      errEl.textContent = "";
+      if (!company) { errEl.textContent = "Введіть фірму або ім'я"; return; }
+      if (!phone) { errEl.textContent = "Введіть телефон"; return; }
+      $("#nb-submit").disabled = true;
+      try {
+        await api("/api/bookings", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ direct: true, date: nbDate, hour: nbHour, company, phone, email, comment }),
+        });
+        closeNbModal();
+        loadBookings();
+      } catch (ex) {
+        errEl.textContent = ex.message;
+        $("#nb-submit").disabled = false;
+      }
+    });
+
     // ---------- render calendar ----------
     const HOURS = [9, 10, 11, 12, 13, 14, 15, 16];
 
@@ -495,6 +602,9 @@
             comp.textContent = bk.company;
             cell.appendChild(comp);
             cell.addEventListener("click", () => openBkModal(bk));
+          } else if (!bk && status === "free") {
+            cell.style.cursor = "pointer";
+            cell.addEventListener("click", () => openNbModal(dayObj.date, h));
           }
 
           row.appendChild(cell);
@@ -508,7 +618,7 @@
     const loadBookings = async () => {
       const box = $("#bookings");
       try {
-        const data = await api("/api/bookings");
+        const data = await apiLoad("/api/bookings", box);
         const bookings = data.bookings || [];
         const pending = bookings.filter((b) => b.status === "pending").length;
         const pc = $("#pending-count");
@@ -605,6 +715,93 @@
       }
     };
     $("#reload-bookings").addEventListener("click", loadBookings);
+
+    // ---------- applications (vacancies) ----------
+    const loadApps = async () => {
+      const box = $("#apps");
+      try {
+        const data = await apiLoad("/api/applications", box);
+        const applications = data.applications || [];
+        const ac = $("#apps-count");
+        ac.hidden = !applications.length;
+        ac.textContent = applications.length;
+
+        if (!applications.length) {
+          box.innerHTML = '<div class="empty">Поки немає заявок на вакансії.</div>';
+          return;
+        }
+        box.innerHTML = "";
+        applications.forEach((a) => {
+          const el = document.createElement("div");
+          el.className = "post";
+          const info = document.createElement("div");
+          info.className = "info";
+          const t = document.createElement("div");
+          t.className = "title";
+          t.textContent = a.name + (a.position ? " — " + a.position : "");
+          const meta = document.createElement("div");
+          meta.className = "meta";
+          const dateSpan = document.createElement("span");
+          dateSpan.textContent = new Date(a.createdAt).toLocaleString("uk-UA");
+          meta.appendChild(dateSpan);
+          const tel = document.createElement("a");
+          tel.href = "tel:" + a.phone.replace(/[^+\d]/g, "");
+          tel.textContent = a.phone;
+          meta.appendChild(tel);
+          if (a.email) {
+            const mail = document.createElement("a");
+            mail.href = "mailto:" + a.email;
+            mail.textContent = a.email;
+            meta.appendChild(mail);
+          }
+          info.append(t, meta);
+          if (a.comment) {
+            const cm = document.createElement("p");
+            cm.className = "muted";
+            cm.style.cssText = "margin: 6px 0 0; font-size: 0.85rem; width: 100%;";
+            cm.textContent = a.comment;
+            info.appendChild(cm);
+          }
+          if (a.files && a.files.length) {
+            const filesDiv = document.createElement("div");
+            filesDiv.style.cssText = "margin-top: 6px; display: flex; gap: 8px; flex-wrap: wrap;";
+            a.files.forEach((f) => {
+              const link = document.createElement("a");
+              link.href = "/api/appfile?id=" + encodeURIComponent(f.id);
+              const sizeKB = Math.ceil(f.size / 1024);
+              link.textContent = "📎 " + f.name + " (" + sizeKB + " KB)";
+              link.style.cssText = "font-size: 0.82rem;";
+              filesDiv.appendChild(link);
+            });
+            info.appendChild(filesDiv);
+          }
+          const actions = document.createElement("div");
+          actions.className = "actions";
+          const delBtn = document.createElement("button");
+          delBtn.className = "btn btn-danger";
+          delBtn.textContent = "Видалити";
+          delBtn.onclick = async () => {
+            if (!confirm("Видалити заявку від " + a.name + "?")) return;
+            try {
+              await api("/api/applications?id=" + encodeURIComponent(a.id), { method: "DELETE" });
+            } catch (ex) {
+              alert("Не вдалося видалити: " + ex.message);
+            }
+            loadApps();
+          };
+          actions.appendChild(delBtn);
+          el.append(info, actions);
+          box.appendChild(el);
+        });
+      } catch (e) {
+        box.innerHTML = "";
+        const errBox = document.createElement("div");
+        errBox.className = "empty";
+        errBox.textContent = "⚠️ " + e.message;
+        box.appendChild(errBox);
+      }
+    };
+    $("#reload-apps").addEventListener("click", loadApps);
 
     // ---------- editor ----------
     let editing = null; // post being edited or null

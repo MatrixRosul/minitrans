@@ -35,6 +35,9 @@ class NotConfigured(Exception):
 
 
 def _connect():
+    """Connect with retries: Neon's free tier suspends after idle and the
+    first connection during wake-up often fails/hangs — retrying for a few
+    seconds hides the cold start instead of surfacing a 500."""
     import pg8000.native
 
     url = _db_url()
@@ -43,14 +46,23 @@ def _connect():
     p = urlsplit(url)
     host = p.hostname or "127.0.0.1"
     local = host in ("127.0.0.1", "localhost", "::1")
-    return pg8000.native.Connection(
-        user=unquote(p.username or getpass.getuser()),
-        password=unquote(p.password) if p.password else None,
-        host=host,
-        port=p.port or 5432,
-        database=(p.path or "/minitrans").lstrip("/") or "minitrans",
-        ssl_context=None if local else ssl.create_default_context(),
-    )
+    last_err = None
+    for attempt in range(3):
+        try:
+            return pg8000.native.Connection(
+                user=unquote(p.username or getpass.getuser()),
+                password=unquote(p.password) if p.password else None,
+                host=host,
+                port=p.port or 5432,
+                database=(p.path or "/minitrans").lstrip("/") or "minitrans",
+                ssl_context=None if local else ssl.create_default_context(),
+                timeout=10,
+            )
+        except Exception as e:  # noqa: BLE001 — retry only connection establishment
+            last_err = e
+            if attempt < 2:
+                time.sleep(1.5)
+    raise last_err
 
 
 SCHEMA = """
@@ -68,6 +80,23 @@ CREATE TABLE IF NOT EXISTS sales_posts (
 );
 CREATE TABLE IF NOT EXISTS photos (
   id         TEXT PRIMARY KEY,
+  mime       TEXT NOT NULL,
+  data       BYTEA NOT NULL,
+  created_at BIGINT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS applications (
+  id         TEXT PRIMARY KEY,
+  name       TEXT NOT NULL,
+  position   TEXT NOT NULL DEFAULT '',
+  phone      TEXT NOT NULL,
+  email      TEXT NOT NULL DEFAULT '',
+  comment    TEXT NOT NULL DEFAULT '',
+  created_at BIGINT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS application_files (
+  id         TEXT PRIMARY KEY,
+  app_id     TEXT NOT NULL,
+  name       TEXT NOT NULL,
   mime       TEXT NOT NULL,
   data       BYTEA NOT NULL,
   created_at BIGINT NOT NULL
@@ -259,12 +288,13 @@ def list_bookings(from_day, to_day):
     return [_row_to_booking(r) for r in rows]
 
 
-def insert_booking(b):
+def insert_booking(b, status="pending"):
     """Returns True on success, False if the slot is already taken."""
     try:
         run(
             "INSERT INTO bookings (id, day, hour, company, phone, email, comment, status, created_at)"
-            " VALUES (:id, :day, :hour, :company, :phone, :email, :comment, 'pending', :created_at)",
+            " VALUES (:id, :day, :hour, :company, :phone, :email, :comment, :status, :created_at)",
+            status=status if status in ("pending", "confirmed") else "pending",
             id=b["id"],
             day=b["day"],
             hour=b["hour"],
@@ -291,6 +321,76 @@ def confirm_booking(booking_id):
         ts=now_ms(),
     )
     return bool(rows)
+
+
+# ---- job applications ----
+
+def insert_application(a):
+    run(
+        "INSERT INTO applications (id, name, position, phone, email, comment, created_at)"
+        " VALUES (:id, :name, :position, :phone, :email, :comment, :created_at)",
+        id=a["id"],
+        name=a["name"],
+        position=a["position"],
+        phone=a["phone"],
+        email=a["email"],
+        comment=a["comment"],
+        created_at=now_ms(),
+    )
+
+
+def insert_application_file(file_id, app_id, name, mime, data):
+    run(
+        "INSERT INTO application_files (id, app_id, name, mime, data, created_at)"
+        " VALUES (:id, :app_id, :name, :mime, :data, :created_at)",
+        id=file_id,
+        app_id=app_id,
+        name=name,
+        mime=mime,
+        data=data,
+        created_at=now_ms(),
+    )
+
+
+def list_applications():
+    apps = [
+        {
+            "id": r[0], "name": r[1], "position": r[2], "phone": r[3],
+            "email": r[4], "comment": r[5], "createdAt": r[6], "files": [],
+        }
+        for r in run(
+            "SELECT id, name, position, phone, email, comment, created_at"
+            " FROM applications ORDER BY created_at DESC"
+        )
+    ]
+    by_id = {a["id"]: a for a in apps}
+    for r in run("SELECT id, app_id, name, length(data) FROM application_files ORDER BY created_at"):
+        if r[1] in by_id:
+            by_id[r[1]]["files"].append({"id": r[0], "name": r[2], "size": r[3]})
+    return apps
+
+
+def get_application_file(file_id):
+    rows = run("SELECT name, mime, data FROM application_files WHERE id = :id", id=file_id)
+    if not rows:
+        return None
+    name, mime, data = rows[0]
+    return name, mime, bytes(data)
+
+
+def delete_application(app_id):
+    run("DELETE FROM application_files WHERE app_id = :id", id=app_id)
+    rows = run("DELETE FROM applications WHERE id = :id RETURNING id", id=app_id)
+    return bool(rows)
+
+
+def count_applications_since(phone, since_ms):
+    rows = run(
+        "SELECT COUNT(*) FROM applications WHERE phone = :p AND created_at > :ts",
+        p=phone,
+        ts=since_ms,
+    )
+    return rows[0][0]
 
 
 def count_active_for_contact(phone, email, from_day):
