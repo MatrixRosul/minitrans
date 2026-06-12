@@ -547,7 +547,8 @@ body.nav-open {
 }
 
 section[id],
-[id].section {
+[id].section,
+#phones {
   scroll-margin-top: 88px;
 }
 
@@ -1604,7 +1605,6 @@ a.slot {
   .site-nav.is-open .nav-links a:nth-child(7) { transition-delay: 0.29s; }
   .site-nav.is-open .nav-links a:nth-child(8) { transition-delay: 0.33s; }
   .site-nav.is-open .nav-links a:nth-child(9) { transition-delay: 0.37s; }
-  .site-nav.is-open .nav-extra a { transition-delay: 0.42s; }
 
   .site-nav .nav-cta {
     width: 100%;
@@ -1626,28 +1626,6 @@ a.slot {
     color: var(--blue-800);
   }
 
-  /* bottom contact block (injected by script.js) */
-  .nav-extra {
-    margin-top: auto;
-    padding-top: 20px;
-    border-top: 1px solid rgba(255, 255, 255, 0.14);
-    display: grid;
-    gap: 2px;
-  }
-
-  .nav-extra-label {
-    font-size: 0.7rem;
-    font-weight: 600;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.45);
-  }
-
-  .site-nav .nav-extra-phone {
-    font-size: 1.22rem;
-    font-weight: 700;
-    padding: 4px 0;
-  }
 
   .grid-3,
   .two-col,

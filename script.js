@@ -10,7 +10,6 @@ const translations = {
     "nav.advantages": "Переваги",
     "nav.vacancies": "Вакансії",
     "nav.sales": "Продаж техніки",
-    "nav.extraLabel": "Зателефонувати",
     "nav.contactCta": "Зв’язатись",
     "nav.toggle": "Відкрити меню",
     "nav.title": "Меню",
@@ -290,7 +289,6 @@ const translations = {
     "nav.advantages": "Advantages",
     "nav.vacancies": "Careers",
     "nav.sales": "Equipment Sales",
-    "nav.extraLabel": "Call us",
     "nav.contactCta": "Contact",
     "nav.toggle": "Open menu",
     "nav.title": "Menu",
@@ -637,24 +635,6 @@ const initNavToggle = () => {
     return;
   }
 
-  // bottom contact block of the mobile menu — injected here so the shared
-  // header markup in every page stays untouched
-  const panel = siteNav.querySelector(".nav-panel");
-  if (panel && !panel.querySelector(".nav-extra")) {
-    const extra = document.createElement("div");
-    extra.className = "nav-extra";
-    const label = document.createElement("span");
-    label.className = "nav-extra-label";
-    label.setAttribute("data-i18n", "nav.extraLabel");
-    label.textContent = "Зателефонувати";
-    const phone = document.createElement("a");
-    phone.className = "nav-extra-phone";
-    phone.href = "tel:+380503178385";
-    phone.textContent = "+38 (050) 317 83 85";
-    extra.append(label, phone);
-    panel.appendChild(extra);
-    setLanguage(localStorage.getItem("siteLang") || "uk");
-  }
 
   const setNavState = (isOpen) => {
     const changed = isOpen !== siteNav.classList.contains("is-open");
@@ -853,8 +833,8 @@ const initSalesPage = () => {
     }
     const btn = document.createElement("a");
     btn.className = "btn btn-primary";
-    btn.href = "tel:+380503178385"; // Віктор — продаж техніки
-    btn.textContent = "+38 (050) 317 83 85";
+    btn.href = "index.html#phones";
+    btn.setAttribute("data-i18n", "sales.inquire");
     foot.append(price, btn);
     body.appendChild(foot);
 
