@@ -790,27 +790,58 @@ section[id],
   font-size: 0.9rem;
 }
 
-/* header "leave a review" button */
+/* header "leave a review": compact icon button with a CSS tooltip
+   (label comes from aria-label, so it follows the site language) */
 .btn-review {
-  padding: 9px 15px;
-  border-radius: 999px;
-  border: 1.5px solid rgba(27, 95, 209, 0.45);
+  position: relative;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  background: var(--gray-100);
+  color: var(--blue-600);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.btn-review svg {
+  width: 19px;
+  height: 19px;
+}
+
+.btn-review:hover,
+.btn-review:focus-visible {
+  background: rgba(27, 95, 209, 0.1);
+  border-color: rgba(27, 95, 209, 0.45);
   color: var(--blue-700);
+}
+
+.btn-review::after {
+  content: attr(aria-label);
+  position: absolute;
+  top: calc(100% + 9px);
+  right: 0;
+  background: var(--blue-950);
+  color: var(--white);
+  font-size: 0.72rem;
   font-weight: 600;
-  font-size: 0.85rem;
+  padding: 6px 10px;
+  border-radius: 8px;
   white-space: nowrap;
-  transition: background 0.15s ease, border-color 0.15s ease;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-4px);
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  z-index: 25;
 }
 
-.btn-review:hover {
-  background: rgba(27, 95, 209, 0.08);
-  border-color: var(--blue-600);
-}
-
-@media (max-width: 1100px) {
-  .btn-review {
-    display: none; /* mobile header keeps only lang + burger */
-  }
+.btn-review:hover::after,
+.btn-review:focus-visible::after {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /* google-style review cards with truck rating */
