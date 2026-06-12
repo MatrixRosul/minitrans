@@ -1,7 +1,6 @@
 # Tacho-service booking.
-# Slots: Mon–Sat, start hours 09:00–17:00 (service till 18:00), 1 client per hour.
+# Slots: Mon–Fri, start hours 09:00–16:00 (service till 17:00), 1 client per hour.
 # Public GET returns slot statuses only (no client data); admin GET also returns bookings.
-# Email notifications: TODO later — for now requests land in the admin panel.
 import datetime
 import os
 import random
@@ -20,9 +19,9 @@ import util  # noqa: E402
 def cancel_url_for(h, booking_id):
     return "%s/api/cancel?id=%s&t=%s" % (util.base_url(h), booking_id, util.cancel_token(booking_id))
 
-HOURS = list(range(9, 18))  # start hours: 09..17
+HOURS = list(range(9, 17))  # start hours 09..16 — service works till 17:00
 HORIZON_DAYS = 14
-SUNDAY = 6
+SATURDAY = 5  # weekdays >= SATURDAY (Sat, Sun) are days off
 
 
 def _kyiv_now():
@@ -43,7 +42,7 @@ def _days(now):
     out = []
     d = now.date()
     while len(out) < HORIZON_DAYS:
-        if d.weekday() != SUNDAY:
+        if d.weekday() < SATURDAY:
             out.append(d)
         d += datetime.timedelta(days=1)
     return out
