@@ -14,8 +14,9 @@ from qrcode.image.styles.moduledrawers.pil import RoundedModuleDrawer
 from qrcode.image.styles.colormasks import SolidFillColorMask
 from PIL import Image, ImageDraw
 
-URL = "https://minitrans.uz.ua"
-OUTPUT_PATH = "/Users/maxrosul/Projects/minitrans/minitrans-qr.png"
+# Defaults; override with CLI args: qr_generate.py [url] [output.png]
+URL = sys.argv[1] if len(sys.argv) > 1 else "https://minitrans.uz.ua"
+OUTPUT_PATH = sys.argv[2] if len(sys.argv) > 2 else "/Users/maxrosul/Projects/minitrans/minitrans-qr.png"
 LOGO_PATH = "/Users/maxrosul/Projects/minitrans/assets/images/logo.png"
 
 # Brand colour: #12346a
@@ -117,9 +118,9 @@ def verify_qr():
 if __name__ == "__main__":
     ratio = LOGO_PLATE_RATIO
 
-    # Allow passing a custom ratio as first CLI arg for retry runs
-    if len(sys.argv) > 1:
-        ratio = float(sys.argv[1])
+    # Optional third CLI arg = custom logo plate ratio (url/output are 1st/2nd)
+    if len(sys.argv) > 3:
+        ratio = float(sys.argv[3])
 
     print(f"Generating QR with logo_plate_ratio={ratio} ...")
     size = generate_qr(logo_plate_ratio=ratio)

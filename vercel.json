@@ -5,7 +5,9 @@
     }
   },
   "rewrites": [
-    { "source": "/admin", "destination": "/admin.html" }
+    { "source": "/admin", "destination": "/admin.html" },
+    { "source": "/booking", "destination": "/booking.html" },
+    { "source": "/sales", "destination": "/sales.html" }
   ],
   "headers": [
     {
