@@ -1649,8 +1649,13 @@ a.slot {
     margin-bottom: 22px;
   }
 
+  .nav-logo {
+    height: 30px;
+    width: auto;
+  }
+
   .nav-title {
-    color: rgba(255, 255, 255, 0.5);
+    display: none; /* the brand logo replaces the "Меню" label */
   }
 
   .nav-links {
